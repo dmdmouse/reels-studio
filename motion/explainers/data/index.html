@@ -1,0 +1,75 @@
+<!doctype html>
+<!-- Data story: справжні числа з лендінгу — річний оборот $2,8 млн → $4,8 млн за рік. Друкована інфографіка: кремовий папір,
+     вугільний шрифт, один червоний акцент лише для нового числа й приросту. Стовпчики ростуть рівно, без пружин;
+     лічильник біжить разом зі стовпчиком; одна примітка пояснює, що це значить (+71 %). Цифри не вигадуємо. -->
+<html lang="uk" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      :root { --paper: #f2eee6; --ink: #1c1a18; --fill: #ddd7c8; --red: #d63b2f; }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1920px; overflow: hidden; background: var(--paper); }
+      #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; background: var(--paper); font-family: "Inter", sans-serif; color: var(--ink); }
+      .kick { position: absolute; left: 90px; top: 210px; font-weight: 700; font-size: 34px; letter-spacing: 0.16em; }
+      .head { position: absolute; left: 90px; top: 270px; width: 900px; font-family: "Oswald", sans-serif; font-weight: 700; font-size: 104px; line-height: 0.98; text-transform: uppercase; }
+      .base { position: absolute; left: 90px; top: 1250px; width: 900px; height: 4px; background: var(--ink); transform-origin: left; }
+      .colm { position: absolute; bottom: 670px; width: 330px; transform-origin: 50% 100%; }
+      .val { position: absolute; width: 330px; text-align: center; font-family: "Oswald", sans-serif; font-weight: 700; font-size: 120px; line-height: 1; }
+      .lab { position: absolute; width: 330px; text-align: center; top: 1276px; font-weight: 700; font-size: 34px; letter-spacing: 0.12em; }
+      .note { position: absolute; left: 140px; top: 470px; font-family: "Oswald", sans-serif; font-weight: 700; font-size: 96px; color: var(--red); }
+      .note small { display: block; font-family: "Inter", sans-serif; font-size: 30px; font-weight: 600; color: var(--ink); letter-spacing: 0.04em; margin-top: 6px; }
+      svg { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; overflow: visible; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="9" data-width="1080" data-height="1920">
+      <div id="chart" class="clip" data-start="0" data-duration="9" data-track-index="0" style="position:absolute;inset:0">
+        <div class="kick" id="k">РІЧНИЙ ОБОРОТ</div>
+        <div class="head" id="h">За один рік</div>
+        <div class="base" id="base"></div>
+        <!-- висота стовпчика пропорційна числу: 2,8 → 316 px, 4,8 → 542 px -->
+        <div class="colm" id="c1" style="left:140px;height:316px;background:var(--fill)"></div>
+        <div class="colm" id="c2" style="left:610px;height:542px;background:var(--ink)"></div>
+        <div class="val" id="v1" style="left:140px;top:800px">$2,8 млн</div>
+        <div class="val" id="v2" style="left:610px;top:574px;color:var(--red)">$4,8 млн</div>
+        <div class="lab" id="l1" style="left:140px">БУЛО</div>
+        <div class="lab" id="l2" style="left:610px">СТАЛО</div>
+        <svg><path id="arr" d="M 380 780 C 430 640, 500 600, 580 600" fill="none" stroke="#d63b2f" stroke-width="8" stroke-linecap="round"/>
+             <path id="arrh" d="M 552 576 L 588 600 L 554 630" fill="none" stroke="#d63b2f" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <div class="note" id="n">+71%<small>+$2 млн за рік</small></div>
+      </div>
+      <audio id="a1" class="clip" data-start="0.30" data-duration="0.4" data-track-index="5" src="assets/sfx/click.wav" data-volume="0.35"></audio>
+      <audio id="a2" class="clip" data-start="1.40" data-duration="0.6" data-track-index="6" src="assets/sfx/swish.wav" data-volume="0.22"></audio>
+      <audio id="a3" class="clip" data-start="3.20" data-duration="1.6" data-track-index="7" src="assets/sfx/riser.wav" data-volume="0.18"></audio>
+      <audio id="a4" class="clip" data-start="4.80" data-duration="1.4" data-track-index="8" src="assets/sfx/impact.wav" data-volume="0.32"></audio>
+      <audio id="a5" class="clip" data-start="6.10" data-duration="0.4" data-track-index="5" src="assets/sfx/pop.wav" data-volume="0.30"></audio>
+    </div>
+    <script>
+      const tl = gsap.timeline({ paused: true });
+      tl.fromTo(["#k", "#h"], { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.25, ease: "power3.out", stagger: 0.12 }, 0.3);
+      tl.fromTo("#base", { scaleX: 0 }, { scaleX: 1, duration: 0.6, ease: "power3.inOut" }, 0.6);
+      // «було»: стовпчик росте рівно, лічильник рахує разом із ним
+      const count = (id, from, to, t, dur) => {
+        const o = { v: from };
+        tl.to(o, { v: to, duration: dur, ease: "power2.out", onUpdate: () => { document.getElementById(id).textContent = "$" + o.v.toFixed(1).replace(".", ",") + " млн"; } }, t);
+      };
+      tl.fromTo("#c1", { scaleY: 0 }, { scaleY: 1, duration: 1.2, ease: "power2.out" }, 1.4);
+      tl.fromTo(["#v1", "#l1"], { opacity: 0 }, { opacity: 1, duration: 0.15 }, 1.4);
+      count("v1", 0, 2.8, 1.4, 1.2);
+      // «стало»: довше й вище; червоне число лише тут
+      tl.fromTo("#c2", { scaleY: 0 }, { scaleY: 1, duration: 1.6, ease: "power2.out" }, 3.2);
+      tl.fromTo(["#v2", "#l2"], { opacity: 0 }, { opacity: 1, duration: 0.15 }, 3.2);
+      tl.fromTo("#v2", { y: 542 }, { y: 0, duration: 1.6, ease: "power2.out" }, 3.2);   // число їде разом із верхом стовпчика
+      count("v2", 0, 4.8, 3.2, 1.6);
+      // примітка: що це значить
+      const draw = (id, t, d) => { const p = document.getElementById(id), L = p.getTotalLength(); p.style.strokeDasharray = L;
+        tl.fromTo(p, { strokeDashoffset: L }, { strokeDashoffset: 0, duration: d, ease: "power2.inOut" }, t); };
+      draw("arr", 5.2, 0.5); draw("arrh", 5.7, 0.15);
+      tl.fromTo("#n", { opacity: 0, scale: 0.8, transformOrigin: "0% 50%" }, { opacity: 1, scale: 1, duration: 0.35, ease: "back.out(1.6)" }, 6.1);
+      window.__timelines = window.__timelines || {};
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>

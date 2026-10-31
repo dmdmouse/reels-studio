@@ -1,0 +1,89 @@
+<!doctype html>
+<!-- VHS / касета: м'яка картинка з розходженням кольорів і шумом (зроблено заздалегідь у plate.mp4), рядки розгортки,
+     екранне меню відеомагнітофона: PLAY, лічильник часу. Слова «друкуються» по літері, як титри на старій касеті,
+     а на кожній зміні думки кадр пробиває смуга перемотування. -->
+<html lang="uk" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1920px; overflow: hidden; background: #000; }
+      #root { position: relative; width: 1080px; height: 1920px; font-family: "IBM Plex Mono", monospace; color: #f2f6ff; }
+      .full { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; object-fit: cover; }
+      #plate { z-index: 1; }
+      #scan { z-index: 5; }
+      .layer { position: absolute; inset: 0; z-index: 3; }
+      .osd { position: absolute; font-weight: 700; font-size: 54px; letter-spacing: 0.04em; text-shadow: -3px 0 #ff2a55, 3px 0 #22e6ff, 0 0 2px #fff; }
+      .title { position: absolute; left: 70px; width: 940px; font-weight: 700; font-size: 104px; line-height: 1.04; letter-spacing: 0.01em;
+               text-shadow: -5px 0 #ff2a55cc, 5px 0 #22e6ffcc; }
+      .title .c { opacity: 0; }
+      .hl .c { background: #1d3cff; }   /* плашка «друкується» разом з літерами */
+      .band { position: absolute; left: 0; width: 1080px; height: 120px; z-index: 6;
+              background: repeating-linear-gradient(90deg, #ffffff40 0 3px, #00000030 3px 7px, #ffffff20 7px 12px); }
+      .vign { position: absolute; inset: 0; z-index: 4; background: radial-gradient(ellipse at 50% 45%, #0000 55%, #000a 100%); }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="8.4" data-width="1080" data-height="1920">
+      <video id="plate" class="clip full" data-start="0" data-duration="8.4" data-track-index="0" src="assets/plate.mp4" muted playsinline></video>
+
+      <div id="vign" class="clip vign" data-start="0" data-duration="8.4" data-track-index="1"></div>
+
+      <!-- екранне меню відеомагнітофона -->
+      <div id="menu" class="clip layer" data-start="0" data-duration="8.4" data-track-index="2">
+        <div class="osd" id="play" style="left:70px;top:200px">PLAY ▶</div>
+        <div class="osd" id="sp" style="right:70px;top:200px">SP</div>
+        <div class="osd" id="tc" style="left:70px;top:1190px">0:00:00</div>
+        <div class="osd" id="date" style="right:150px;top:1190px">ЖОВ 29 2026</div>
+      </div>
+
+      <!-- титри, що «друкуються» -->
+      <div id="t1" class="clip layer" data-start="0.3" data-duration="1.04" data-track-index="3"><div class="title" id="t1x" style="top:380px">ОПИСУЮ<br/>СЛОВАМИ</div></div>
+      <div id="t2" class="clip layer" data-start="2.36" data-duration="2.42" data-track-index="3"><div class="title" id="t2x" style="top:380px">НЕ ПОТРІБНО<br/><span class="hl">ЖОДНОЇ</span><br/>ПРОГРАМИ</div></div>
+      <div id="t3" class="clip layer" data-start="4.82" data-duration="2.0" data-track-index="3"><div class="title" id="t3x" style="top:380px;font-size:92px">&gt; ШВИДКА<br/>&nbsp; СКЛЕЙКА<br/>&gt; БІЛЬШІ<br/>&nbsp; ТИТРИ</div></div>
+      <div id="t4" class="clip layer" data-start="6.86" data-duration="1.54" data-track-index="3"><div class="title" id="t4x" style="top:380px">= ОДНЕ<br/><span class="hl">РЕЧЕННЯ</span> ▶▶</div></div>
+
+      <img id="scan" class="clip full" data-start="0" data-duration="8.4" data-track-index="4" src="assets/scanlines.png" alt="" />
+      <div id="bands" class="clip layer" data-start="0" data-duration="8.4" data-track-index="5" style="z-index:6">
+        <div class="band" id="bd1" style="top:-140px"></div>
+        <div class="band" id="bd2" style="top:-140px"></div>
+        <div class="band" id="bd3" style="top:-140px"></div>
+      </div>
+      <audio id="voice" class="clip" data-start="0" data-duration="8.4" data-track-index="9" src="assets/voice.m4a" data-volume="1"></audio>
+    </div>
+    <script>
+      const tl = gsap.timeline({ paused: true });
+      // розбиваємо кожен титр на літери, щоб «друкувати» їх по одній (до побудови таймлайну — кадри детерміновані)
+      const typeIn = (id, t, cps) => {
+        const el = document.getElementById(id);
+        const walk = (n) => {
+          for (const c of [...n.childNodes]) {
+            if (c.nodeType === 3) {
+              const f = document.createDocumentFragment();
+              for (const ch of c.textContent) { const s = document.createElement("span"); s.className = "c"; s.textContent = ch; f.appendChild(s); }
+              n.replaceChild(f, c);
+            } else if (c.nodeName !== "BR") walk(c);
+          }
+        };
+        walk(el);
+        el.querySelectorAll(".c").forEach((s, i) => tl.set(s, { opacity: 1 }, t + i / cps));
+      };
+      typeIn("t1x", 0.40, 26); typeIn("t2x", 2.40, 24); typeIn("t3x", 4.86, 22); typeIn("t4x", 7.40, 28);
+      // смуга перемотування на зміні думки
+      [["#bd1", 2.30], ["#bd2", 4.76], ["#bd3", 6.80]].forEach(([s, t]) =>
+        tl.fromTo(s, { y: 0 }, { y: 2200, duration: 0.32, ease: "none" }, t));
+      // «REC»-мигання PLAY: дискретно, без нескінченних повторів
+      for (let t = 0; t < 8.4; t += 1.0) tl.set("#play", { opacity: 1 }, t).set("#play", { opacity: 0.35 }, t + 0.5);
+      // лічильник часу — функція часу таймлайну
+      const tc = { s: 0 };
+      tl.to(tc, { s: 8.4, duration: 8.4, ease: "none", onUpdate: () => {
+        const s = tc.s, f = Math.floor((s % 1) * 30);
+        document.getElementById("tc").textContent = "0:00:0" + Math.floor(s) + ":" + String(f).padStart(2, "0");
+      } }, 0);
+      window.__timelines = window.__timelines || {};
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>

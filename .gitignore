@@ -1,0 +1,17 @@
+# Твої відео, чернетки й середовища лишаються лише на твоєму комп'ютері
+inbox/*
+refs/*
+music/*
+output/*
+work/*
+!inbox/README.md
+!refs/README.md
+!music/README.md
+!output/README.md
+!work/README.md
+effects/
+remotion-studio/
+.venv/
+__pycache__/
+.DS_Store
+.env*

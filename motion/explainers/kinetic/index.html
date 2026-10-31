@@ -1,0 +1,83 @@
+<!doctype html>
+<!-- Kinetic typography: фраза збирається слово за словом у великих крупних планах, як камера, що ходить по друкованому плакату,
+     а наприкінці камера відʼїжджає й показує весь плакат. Кремовий папір, майже чорний шрифт, червоний лише для «РЕЧЕННЯ».
+     Звук: тихий клац на кожному слові, удар на «РЕЧЕННЯ», свіш на відʼїзд. Музики немає. -->
+<html lang="uk" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      :root { --paper: #ebe7de; --ink: #141412; --red: #e64124; }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1920px; overflow: hidden; background: var(--paper); }
+      #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; background: var(--paper); font-family: "Oswald", sans-serif; }
+      #cam { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; transform-origin: 0 0; }
+      .w { position: absolute; font-weight: 700; line-height: 0.86; letter-spacing: -0.01em; color: var(--ink); white-space: nowrap; text-transform: uppercase; }
+      .out { color: transparent; -webkit-text-stroke: 4px var(--ink); text-shadow: 8px 8px 0 #14141222, 16px 16px 0 #14141214; }
+      .rule { position: absolute; left: 80px; width: 920px; height: 12px; background: var(--red); transform-origin: left; }
+      .credit { position: absolute; font-family: "Inter", sans-serif; font-weight: 700; font-size: 30px; letter-spacing: 0.2em; color: var(--ink); }
+      .c { opacity: 0; }
+      .grain { position: absolute; inset: 0; background: radial-gradient(#0000 60%, #00000010); }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="9" data-width="1080" data-height="1920">
+      <div id="poster" class="clip" data-start="0" data-duration="9" data-track-index="0" style="position:absolute;inset:0">
+        <div id="cam">
+          <div class="w" id="w1" style="left:80px;top:210px;font-size:210px">Швидка</div>
+          <div class="w" id="w2" style="left:80px;top:400px;font-size:210px">склейка</div>
+          <div class="w" id="w3" style="left:84px;top:640px;font-size:120px">чи</div>
+          <div class="w out" id="w4" style="left:250px;top:606px;font-size:160px">більші</div>
+          <div class="w" id="w5" style="left:80px;top:770px;font-size:236px">титри</div>
+          <div class="rule" id="rule" style="top:1012px"></div>
+          <div class="w" id="w6" style="left:80px;top:1046px;font-size:84px">це просто ще одне</div>
+          <div class="w" id="w7" style="left:76px;top:1128px;font-size:196px;color:var(--red)">речення.</div>
+          <div class="credit" id="cr" style="left:84px;top:150px">REELS СТУДІЯ</div>
+        </div>
+        <div class="grain"></div>
+      </div>
+      <audio id="s1" class="clip" data-start="0.10" data-duration="0.4" data-track-index="5" src="assets/sfx/click.wav" data-volume="0.35"></audio>
+      <audio id="s2" class="clip" data-start="0.70" data-duration="0.4" data-track-index="5" src="assets/sfx/click.wav" data-volume="0.35"></audio>
+      <audio id="s3" class="clip" data-start="1.40" data-duration="0.4" data-track-index="5" src="assets/sfx/click.wav" data-volume="0.35"></audio>
+      <audio id="s4" class="clip" data-start="1.80" data-duration="0.4" data-track-index="5" src="assets/sfx/click.wav" data-volume="0.35"></audio>
+      <audio id="s5" class="clip" data-start="2.50" data-duration="0.6" data-track-index="6" src="assets/sfx/swish.wav" data-volume="0.25"></audio>
+      <audio id="s6" class="clip" data-start="3.60" data-duration="0.6" data-track-index="6" src="assets/sfx/swish.wav" data-volume="0.22"></audio>
+      <audio id="s7" class="clip" data-start="4.30" data-duration="0.4" data-track-index="5" src="assets/sfx/click.wav" data-volume="0.35"></audio>
+      <audio id="s8" class="clip" data-start="5.30" data-duration="1.4" data-track-index="7" src="assets/sfx/impact.wav" data-volume="0.35"></audio>
+      <audio id="s9" class="clip" data-start="6.40" data-duration="1.2" data-track-index="6" src="assets/sfx/whoosh.wav" data-volume="0.22"></audio>
+      <audio id="s10" class="clip" data-start="7.40" data-duration="1.0" data-track-index="8" src="assets/sfx/typing.wav" data-volume="0.18"></audio>
+    </div>
+    <script>
+      const tl = gsap.timeline({ paused: true });
+      // камера: кадр = прямокутник плаката (x, y, ширина) → масштаб і зсув, щоб він став на весь екран
+      const frame = (cx, cy, w) => { const s = 1080 / w; return { scale: s, x: 540 - cx * s, y: 960 - cy * s }; };   // точка плаката (cx, cy) — у центр екрана
+      const shot = (t, cx, cy, w, dur = 0.5, ease = "expo.inOut") => tl.to("#cam", { ...frame(cx, cy, w), duration: dur, ease }, t);
+      tl.set("#cam", frame(470, 300, 1000), 0);
+      // слова зʼявляються одразу, без «напливу»: друкарський удар
+      const hit = (sel, t) => { tl.set(sel, { opacity: 0 }, 0); tl.set(sel, { opacity: 1 }, t); };
+      hit("#w1", 0.10);
+      tl.fromTo("#w2", { opacity: 0, clipPath: "inset(0 100% 0 0)" }, { opacity: 1, clipPath: "inset(0 0% 0 0)", duration: 0.28, ease: "expo.out" }, 0.70);
+      shot(0.55, 470, 400, 900, 0.45);
+      hit("#w3", 1.40); hit("#w4", 1.80);
+      shot(1.30, 480, 690, 860, 0.45);
+      // «більші титри»: слово справді росте
+      hit("#w5", 2.50);
+      tl.fromTo("#w5", { scale: 0.55, transformOrigin: "0% 50%" }, { scale: 1, duration: 0.55, ease: "back.out(1.6)" }, 2.50);
+      shot(2.40, 480, 875, 900, 0.5);
+      tl.fromTo("#rule", { scaleX: 0 }, { scaleX: 1, duration: 0.3, ease: "expo.out" }, 3.60);
+      hit("#w6", 4.30);
+      shot(3.50, 540, 1070, 1000, 0.55);
+      hit("#w7", 5.30);
+      tl.fromTo("#w7", { y: 80 }, { y: 0, duration: 0.22, ease: "expo.out" }, 5.30);
+      shot(5.20, 520, 1190, 1000, 0.4);
+      // відʼїзд: увесь плакат
+      tl.to("#cam", { scale: 1, x: 0, y: 0, duration: 0.9, ease: "power3.inOut" }, 6.40);
+      // підпис друкується
+      const cr = document.getElementById("cr"); const text = cr.textContent; cr.textContent = "";
+      [...text].forEach((ch, i) => { const s = document.createElement("span"); s.className = "c"; s.textContent = ch; cr.appendChild(s); tl.set(s, { opacity: 1 }, 7.45 + i * 0.05); });
+      window.__timelines = window.__timelines || {};
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>

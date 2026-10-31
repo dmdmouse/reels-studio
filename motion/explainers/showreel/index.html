@@ -1,0 +1,112 @@
+<!doctype html>
+<!-- Showreel: один помаранчевий мʼяч проходить через усі глави й веде кожен перехід — відскок зі сплющенням,
+     кінетичний шрифт, хвиля сітки, тунель кілець — і наприкінці стає крапкою в слові. Різкі удари проти коротких пауз.
+     Кольори: майже чорний, кремовий, помаранчевий, кобальт. Плаский рисунок, без сяйва. Звук на кожній дії, музики немає. -->
+<html lang="uk" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      :root { --k: #111116; --cr: #efebe4; --or: #f36b35; --bl: #2a42ff; }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1920px; overflow: hidden; background: var(--k); }
+      #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; background: var(--k); font-family: "Montserrat", sans-serif; }
+      .full { position: absolute; inset: 0; }
+      #ball { position: absolute; left: 540px; top: 400px; width: 90px; height: 90px; margin: -45px 0 0 -45px; border-radius: 50%; background: var(--or); z-index: 5; }
+      .ground { position: absolute; left: 140px; width: 800px; top: 1046px; height: 4px; background: var(--cr); transform-origin: center; }
+      .big { position: absolute; left: 0; width: 1080px; top: 700px; text-align: center; font-weight: 900; font-size: 205px; letter-spacing: -0.05em; line-height: 1; color: var(--k); }
+      .half { position: absolute; inset: 0; }
+      .dotg { position: absolute; width: 26px; height: 26px; margin: -13px 0 0 -13px; background: var(--cr); }
+      .ring { position: absolute; left: 540px; top: 900px; border-radius: 50%; border: 18px dashed var(--cr); }
+      .mark { position: absolute; left: 0; width: 1080px; top: 820px; text-align: center; font-weight: 900; font-size: 150px; letter-spacing: -0.05em; color: var(--cr); line-height: 1; }
+      .sub { position: absolute; left: 0; width: 1080px; top: 1000px; text-align: center; font-family: "JetBrains Mono", monospace; font-size: 34px; color: #efebe4aa; letter-spacing: 0.2em; }
+      .lbl { position: absolute; left: 70px; top: 200px; font-family: "JetBrains Mono", monospace; font-size: 28px; letter-spacing: 0.15em; color: #efebe4aa; z-index: 6; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="10" data-width="1080" data-height="1920">
+      <!-- 1: відскок -->
+      <div id="c1" class="clip full" data-start="0" data-duration="2.2" data-track-index="0"><div class="ground" id="gr"></div></div>
+      <!-- 2: кінетичний шрифт на помаранчевому -->
+      <div id="c2" class="clip full" data-start="2.2" data-duration="2.0" data-track-index="0" style="background:var(--or)">
+        <div class="half" id="top" style="clip-path:inset(0 0 50% 0)"><div class="big">МОНТАЖ</div></div>
+        <div class="half" id="bot" style="clip-path:inset(50% 0 0 0)"><div class="big">МОНТАЖ</div></div>
+      </div>
+      <!-- 3: хвиля сітки на кремовому -->
+      <div id="c3" class="clip full" data-start="4.2" data-duration="2.0" data-track-index="0" style="background:var(--cr)"><div id="grid"></div></div>
+      <!-- 4: тунель на кобальті -->
+      <div id="c4" class="clip full" data-start="6.2" data-duration="1.4" data-track-index="0" style="background:var(--bl)">
+        <div class="ring" id="q1"></div><div class="ring" id="q2"></div><div class="ring" id="q3"></div><div class="ring" id="q4"></div>
+      </div>
+      <!-- 5: слово -->
+      <div id="c5" class="clip full" data-start="7.6" data-duration="2.4" data-track-index="0">
+        <div class="mark" id="mk">REELS<span id="stop" style="color:transparent">.</span></div>
+        <div class="sub" id="sb">СТУДІЯ · CLAUDE</div>
+      </div>
+      <div id="lb" class="clip full" data-start="0" data-duration="7.6" data-track-index="2" style="z-index:6">
+        <div class="lbl" id="lb1">01 / 04 · ВІДСКОК</div><div class="lbl" id="lb2" style="color:#111116">02 / 04 · ШРИФТ</div><div class="lbl" id="lb3" style="color:#111116">03 / 04 · СИСТЕМА</div><div class="lbl" id="lb4">04 / 04 · ГЛИБИНА</div>
+      </div>
+      <div id="bl" class="clip full" data-start="0" data-duration="10" data-track-index="1" style="z-index:5"><div id="ball"></div></div>
+      <audio id="a1" class="clip" data-start="0.95" data-duration="0.4" data-track-index="5" src="assets/sfx/click.wav" data-volume="0.4"></audio>
+      <audio id="a2" class="clip" data-start="1.45" data-duration="0.4" data-track-index="5" src="assets/sfx/click.wav" data-volume="0.3"></audio>
+      <audio id="a3" class="clip" data-start="2.20" data-duration="1.4" data-track-index="6" src="assets/sfx/impact.wav" data-volume="0.32"></audio>
+      <audio id="a4" class="clip" data-start="3.20" data-duration="0.6" data-track-index="7" src="assets/sfx/swish.wav" data-volume="0.25"></audio>
+      <audio id="a5" class="clip" data-start="4.20" data-duration="1.2" data-track-index="7" src="assets/sfx/whoosh.wav" data-volume="0.22"></audio>
+      <audio id="a6" class="clip" data-start="6.20" data-duration="1.4" data-track-index="8" src="assets/sfx/riser.wav" data-volume="0.2"></audio>
+      <audio id="a7" class="clip" data-start="7.60" data-duration="2.0" data-track-index="9" src="assets/sfx/sub.wav" data-volume="0.4"></audio>
+    </div>
+    <script>
+      const tl = gsap.timeline({ paused: true });
+      // сітка точок для глави 3 (статична розмітка, рух — з таймлайну)
+      const grid = document.getElementById("grid"); const dots = [];
+      for (let r = 0; r < 13; r++) for (let c = 0; c < 9; c++) {
+        const d = document.createElement("div"); d.className = "dotg";
+        d.style.left = (140 + c * 100) + "px"; d.style.top = (360 + r * 100) + "px"; grid.appendChild(d); dots.push([d, Math.hypot(c * 100 + 140 - 540, r * 100 + 360 - 960)]);
+      }
+      // 1: мʼяч падає, сплющується, відскакує двічі
+      tl.fromTo("#gr", { scaleX: 0 }, { scaleX: 1, duration: 0.4, ease: "expo.out" }, 0);
+      tl.fromTo("#ball", { y: -300 }, { y: 600, duration: 0.65, ease: "power2.in" }, 0.3);
+      tl.to("#ball", { scaleX: 1.5, scaleY: 0.55, duration: 0.06 }, 0.95).to("#ball", { scaleX: 1, scaleY: 1, duration: 0.1 }, 1.01);
+      tl.to("#ball", { y: 300, duration: 0.25, ease: "power2.out" }, 1.01).to("#ball", { y: 600, duration: 0.2, ease: "power2.in" }, 1.26);
+      tl.to("#ball", { scaleX: 1.3, scaleY: 0.75, duration: 0.05 }, 1.46).to("#ball", { scaleX: 1, scaleY: 1, duration: 0.08 }, 1.51);
+      tl.to("#ball", { y: 500, duration: 0.25, ease: "power2.out" }, 1.51);
+      // мʼяч розростається на весь кадр — перехід у помаранчеву главу
+      tl.to("#ball", { scale: 30, duration: 0.45, ease: "power3.in" }, 1.75);
+      tl.set("#ball", { scale: 1, y: 500, opacity: 0 }, 2.2);
+      // 2: слово ляскає, лезо розрізає, половинки розʼїжджаються і повертаються
+      tl.fromTo(["#top", "#bot"], { scale: 1.4, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.18, ease: "expo.out" }, 2.25);
+      tl.to("#top", { x: -260, duration: 0.25, ease: "expo.out" }, 3.2).to("#bot", { x: 260, duration: 0.25, ease: "expo.out" }, 3.2);
+      tl.to(["#top", "#bot"], { x: 0, duration: 0.3, ease: "back.out(2)" }, 3.6);
+      tl.set("#ball", { opacity: 1, scale: 0.01, y: 500 }, 3.95);
+      tl.to("#ball", { scale: 1, duration: 0.25, ease: "back.out(3)" }, 3.95);
+      // 3: хвиля від мʼяча по сітці — точки обертаються в ромби й міняють колір
+      tl.set("#ball", { y: 500 }, 4.2);
+      dots.forEach(([d, r]) => {
+        const t = 4.35 + r / 1400;
+        tl.fromTo(d, { rotation: 0, scale: 1 }, { rotation: 45, scale: 1.25, duration: 0.25, ease: "back.out(2)" }, t);
+        tl.to(d, { backgroundColor: r % 3 < 1 ? "#f36b35" : "#2a42ff", duration: 0.12 }, t + 0.1);
+      });
+      // 4: тунель кілець летить на глядача
+      [["#q1", 0], ["#q2", 0.25], ["#q3", 0.5], ["#q4", 0.75]].forEach(([q, d]) => {
+        tl.fromTo(q, { width: 40, height: 40, marginLeft: -20, marginTop: -20, opacity: 1, rotation: 0 },
+          { width: 2600, height: 2600, marginLeft: -1300, marginTop: -1300, opacity: 0.2, rotation: 90, duration: 1.1, ease: "power2.in" }, 6.25 + d);
+      });
+      // 5: слово, мʼяч стає крапкою
+      tl.fromTo("#mk", { opacity: 0, letterSpacing: "0.2em" }, { opacity: 1, letterSpacing: "-0.05em", duration: 0.35, ease: "expo.out" }, 7.6);
+      tl.fromTo("#sb", { opacity: 0 }, { opacity: 1, duration: 0.3 }, 8.1);
+      tl.to("#ball", { scale: 0.42, duration: 0.3, ease: "expo.out",
+        onUpdate: () => { const r = document.getElementById("stop").getBoundingClientRect(), o = document.getElementById("root").getBoundingClientRect();
+          gsap.set("#ball", { x: r.left + r.width / 2 - o.left - 540, y: r.top - o.top + r.height * 0.78 - 400 }); } }, 7.65);
+      tl.to({ v: 0 }, { v: 1, duration: 2.0, onUpdate: () => { const r = document.getElementById("stop").getBoundingClientRect(), o = document.getElementById("root").getBoundingClientRect();
+          gsap.set("#ball", { x: r.left + r.width / 2 - o.left - 540, y: r.top - o.top + r.height * 0.78 - 400 }); } }, 7.95);
+      // підпис глави
+      // підпис глави: кожен — окремий напис, видно лише свій (детерміновано при будь-якому перемотуванні)
+      [["#lb1", 0, 2.2], ["#lb2", 2.2, 4.2], ["#lb3", 4.2, 6.2], ["#lb4", 6.2, 7.6]].forEach(([s, a, b]) => {
+        tl.set(s, { opacity: 0 }, 0); tl.set(s, { opacity: 1 }, a + 0.001); tl.set(s, { opacity: 0 }, b);
+      });
+      window.__timelines = window.__timelines || {};
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>

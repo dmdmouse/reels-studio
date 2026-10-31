@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="uk" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1920px; overflow: hidden; background: #f4f3f0; }
+      #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; background: #f4f3f0; font-family: "Inter", sans-serif; color: #141414; }
+      .card { position: absolute; width: 460px; height: 818px; top: 330px; border-radius: 30px; overflow: hidden; box-shadow: 0 22px 60px rgba(20,20,20,.16); background: #ddd; }
+      .card img { width: 100%; height: 100%; object-fit: cover; display: block; }
+      #c1 { left: 56px; } #c2 { left: 564px; }
+      .cap { position: absolute; width: 460px; top: 1180px; font-weight: 800; font-size: 54px; line-height: 1.08; letter-spacing: -0.02em; text-align: center; }
+      #l1 { left: 56px; color: #6b6a66; } #l2 { left: 564px; color: #f36b35; }
+      #mid { position: absolute; left: 0; width: 1080px; top: 225px; text-align: center; font-weight: 800; font-size: 64px; letter-spacing: -0.03em; }
+      #arr { position: absolute; left: 470px; top: 660px; width: 140px; height: 140px; border-radius: 70px; background: #f36b35; }
+      #arr svg { position: absolute; inset: 0; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="4.8" data-width="1080" data-height="1920">
+      <div id="all" class="clip" data-start="0" data-duration="4.8" data-track-index="0" style="position:absolute;inset:0">
+        <!-- ЗАМІНИ: assets/before.jpg, assets/after.jpg (кадри з відео людини), її слова й секунди -->
+        <div id="mid">за кілька хвилин</div>
+        <div class="card" id="c1"><img src="assets/before.jpg" alt=""></div>
+        <div class="card" id="c2"><img src="assets/after.jpg" alt=""></div>
+        <div class="cap" id="l1">сирий матеріал</div>
+        <div class="cap" id="l2">те, що ви зараз бачите</div>
+        <div id="arr"><svg viewBox="0 0 140 140"><path d="M42 70 H96 M72 46 L96 70 L72 94" fill="none" stroke="#fff" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      </div>
+      <div id="fade" class="clip" data-start="0" data-duration="0.2" data-track-index="9" style="position:absolute;inset:0;background:#f4f3f0"></div>
+      <audio id="a1" class="clip" data-start="0.20" data-duration="0.2" data-track-index="5" src="assets/sfx/pop.wav" data-volume="0.3"></audio>
+      <audio id="a2" class="clip" data-start="2.60" data-duration="0.3" data-track-index="5" src="assets/sfx/swish.wav" data-volume="0.35"></audio>
+      <audio id="a3" class="clip" data-start="3.60" data-duration="0.3" data-track-index="6" src="assets/sfx/impact.wav" data-volume="0.4"></audio>
+    </div>
+    <script>
+      const tl = gsap.timeline({ paused: true });
+      tl.fromTo("#fade", { opacity: 1 }, { opacity: 0, duration: 0.1 }, 0);
+      tl.fromTo("#all", { scale: 1 }, { scale: 1.05, duration: 4.8, ease: "none" }, 0);   // кадр не стоїть, поки людина говорить
+      tl.fromTo("#c1", { x: -60, opacity: 0 }, { x: 0, opacity: 1, duration: 0.3, ease: "power3.out" }, 0.20);
+      tl.fromTo("#l1", { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 0.2, ease: "power3.out" }, 0.34);
+      tl.fromTo("#mid", { y: -24, opacity: 0 }, { y: 0, opacity: 1, duration: 0.2, ease: "power3.out" }, 2.60);
+      tl.fromTo("#arr", { scale: 0 }, { scale: 1, duration: 0.26, ease: "back.out(2.2)" }, 2.60);
+      tl.fromTo("#c2", { x: 60, opacity: 0, scale: 0.94 }, { x: 0, opacity: 1, scale: 1, duration: 0.3, ease: "power3.out" }, 3.60);
+      tl.fromTo("#l2", { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 0.2, ease: "power3.out" }, 3.72);
+      window.__timelines = window.__timelines || {};
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>

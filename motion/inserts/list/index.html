@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="uk" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1920px; overflow: hidden; background: #f4f3f0; }
+      #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; background: #f4f3f0; font-family: "Inter", sans-serif; color: #141414; }
+      .row { position: absolute; left: 70px; width: 940px; height: 240px; background: #fff; border-radius: 36px; display: flex; align-items: center; gap: 34px; padding: 0 44px; box-shadow: 0 18px 50px rgba(20,20,20,.08); }
+      .row img { width: 150px; height: 150px; flex: none; }
+      .row div { font-weight: 800; font-size: 72px; line-height: 1.04; letter-spacing: -0.03em; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="3.6" data-width="1080" data-height="1920">
+      <div id="all" class="clip" data-start="0" data-duration="3.6" data-track-index="0" style="position:absolute;inset:0">
+        <!-- ЗАМІНИ: слова людини, іконки (assets/*.png) і секунди появи кожного рядка -->
+        <div class="row" id="r1" style="top:440px"><img src="assets/cross_mark.png" alt=""><div>CapCut</div></div>
+        <div class="row" id="r2" style="top:710px"><img src="assets/cross_mark.png" alt=""><div>застосунок для монтажу</div></div>
+        <div class="row" id="r3" style="top:980px"><img src="assets/cross_mark.png" alt=""><div>нічого</div></div>
+      </div>
+      <div id="fade" class="clip" data-start="0" data-duration="0.2" data-track-index="9" style="position:absolute;inset:0;background:#f4f3f0"></div>
+      <audio id="a1" class="clip" data-start="0.40" data-duration="0.2" data-track-index="5" src="assets/sfx/pop.wav" data-volume="0.35"></audio>
+      <audio id="a2" class="clip" data-start="1.36" data-duration="0.2" data-track-index="5" src="assets/sfx/pop.wav" data-volume="0.35"></audio>
+      <audio id="a3" class="clip" data-start="2.84" data-duration="0.3" data-track-index="5" src="assets/sfx/impact.wav" data-volume="0.4"></audio>
+    </div>
+    <script>
+      const tl = gsap.timeline({ paused: true });
+      tl.fromTo("#fade", { opacity: 1 }, { opacity: 0, duration: 0.1 }, 0);
+      tl.fromTo("#all", { scale: 1 }, { scale: 1.05, duration: 3.6, ease: "none" }, 0);   // кадр не стоїть, поки людина говорить
+      [["#r1", 0.40], ["#r2", 1.36], ["#r3", 2.84]].forEach(([s, t]) => {
+        tl.fromTo(s, { y: 70, scale: 0.92, opacity: 0 }, { y: 0, scale: 1, opacity: 1, duration: 0.26, ease: "back.out(1.8)" }, t);
+        tl.fromTo(s + " img", { scale: 0.4, rotation: -14 }, { scale: 1, rotation: 0, duration: 0.34, ease: "back.out(2.4)" }, t + 0.05);
+      });
+      window.__timelines = window.__timelines || {};
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>

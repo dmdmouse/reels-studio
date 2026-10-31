@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="uk" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1920px; overflow: hidden; background: #f4f3f0; }
+      #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; background: #f4f3f0; font-family: "Inter", sans-serif; color: #141414; }
+      #cam { position: absolute; left: 60px; top: 300px; width: 960px; height: 860px; border-radius: 30px; overflow: hidden; background: #fff; box-shadow: 0 24px 70px rgba(20,20,20,.18); }
+      #shot { position: absolute; left: 0; top: 0; width: 960px; transform-origin: 0 0; }
+      #mark { position: absolute; left: 60px; top: 300px; width: 960px; height: 860px; overflow: visible; }
+      #mark path { fill: none; stroke: #f36b35; stroke-width: 11; stroke-linecap: round; }
+      #cap { position: absolute; left: 60px; width: 960px; top: 1200px; text-align: center; font-weight: 800; font-size: 76px; line-height: 1.06; letter-spacing: -0.03em; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="3.2" data-width="1080" data-height="1920">
+      <div id="all" class="clip" data-start="0" data-duration="3.2" data-track-index="0" style="position:absolute;inset:0">
+        <!-- ЗАМІНИ: assets/shot.jpg — справжній скріншот; слова людини; у масштабі нижче — куди наїхати -->
+        <div id="cam"><img id="shot" src="assets/shot.jpg" alt=""></div>
+        <svg id="mark" viewBox="0 0 960 860"><path id="m" d="M 170 90 C 420 30, 800 40, 860 150 C 910 250, 800 330, 480 340 C 200 350, 60 300, 70 190 C 76 120, 170 70, 300 60"/></svg>
+        <div id="cap">повний розкадрований план</div>
+      </div>
+      <audio id="a1" class="clip" data-start="0.16" data-duration="0.3" data-track-index="5" src="assets/sfx/swish.wav" data-volume="0.35"></audio>
+      <audio id="a2" class="clip" data-start="1.10" data-duration="0.6" data-track-index="6" src="assets/sfx/whoosh.wav" data-volume="0.16"></audio>
+    </div>
+    <script>
+      const tl = gsap.timeline({ paused: true });
+      tl.from("#all", { opacity: 0, duration: 0.1 }, 0);
+      tl.fromTo("#cam", { y: 90, opacity: 0, scale: 0.96 }, { y: 0, opacity: 1, scale: 1, duration: 0.3, ease: "power3.out" }, 0.16);
+      tl.fromTo("#cap", { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 0.2, ease: "power3.out" }, 0.34);
+      tl.fromTo("#shot", { scale: 1 }, { scale: 1.12, duration: 2.8, ease: "none" }, 0.2);
+      const p = document.getElementById("m"), L = p.getTotalLength();
+      p.style.strokeDasharray = L + " " + L;
+      tl.fromTo(p, { strokeDashoffset: L }, { strokeDashoffset: 0, duration: 0.6, ease: "power1.inOut" }, 1.10);
+      window.__timelines = window.__timelines || {};
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>

@@ -1,0 +1,69 @@
+<!doctype html>
+<!-- Risograph: усе надруковано двома фарбами — рожевою й синьою — растром на теплому папері (картинку зроблено заздалегідь у plate.mp4).
+     Текст теж «друкується»: спершу рожева форма, через 2 кадри синя, зсунута на 4 px, і там, де фарби накладаються, з'являється третій колір. -->
+<html lang="uk" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      :root { --pink: #ff48b0; --blue: #0078bf; --paper: #f5efe2; }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1920px; overflow: hidden; background: var(--paper); }
+      #root { position: relative; width: 1080px; height: 1920px; font-family: "Montserrat", sans-serif; }
+      .full { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; object-fit: cover; }
+      #plate { z-index: 1; }
+      .layer { position: absolute; inset: 0; z-index: 3; }
+      .ink { position: absolute; left: 64px; font-weight: 900; line-height: 0.88; letter-spacing: -0.035em; white-space: nowrap; mix-blend-mode: multiply; }
+      .pk { color: var(--pink); }
+      .bl { color: var(--blue); }
+      .stamp { position: absolute; border-radius: 50%; mix-blend-mode: multiply; }
+      .panel { position: absolute; left: 0; width: 1080px; mix-blend-mode: multiply; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="8.4" data-width="1080" data-height="1920">
+      <video id="plate" class="clip full" data-start="0" data-duration="8.4" data-track-index="0" src="assets/plate.mp4" muted playsinline></video>
+
+      <!-- верхня плашка паперу: на ній текст читається чисто -->
+      <div id="top" class="clip layer" data-start="0" data-duration="8.4" data-track-index="1">
+        <div class="panel" id="pan" style="top:150px;height:600px;background:var(--paper)"></div>
+      </div>
+
+      <div id="b1" class="clip layer" data-start="0.3" data-duration="1.04" data-track-index="2">
+        <div class="ink pk" id="p1" style="top:200px;font-size:170px">ОПИСУЮ<br/>СЛОВАМИ</div>
+        <div class="ink bl" id="q1" style="top:204px;left:68px;font-size:170px">ОПИСУЮ<br/>&nbsp;</div>
+      </div>
+      <div id="b2" class="clip layer" data-start="2.36" data-duration="2.44" data-track-index="2">
+        <div class="ink bl" id="p2" style="top:196px;font-size:96px">НЕ ПОТРІБНО</div>
+        <div class="ink pk" id="q2" style="top:300px;font-size:150px">ЖОДНОЇ<br/>ПРОГРАМИ</div>
+      </div>
+      <div id="b3" class="clip layer" data-start="4.82" data-duration="2.02" data-track-index="2">
+        <div class="ink pk" id="p3" style="top:210px;font-size:124px">ШВИДКА<br/>СКЛЕЙКА</div>
+        <div class="ink bl" id="q3" style="top:450px;left:150px;font-size:124px">БІЛЬШІ<br/>ТИТРИ</div>
+      </div>
+      <div id="b4" class="clip layer" data-start="6.86" data-duration="1.54" data-track-index="2">
+        <div class="ink bl" id="p4" style="top:196px;font-size:92px">ЦЕ ПРОСТО</div>
+        <div class="ink pk" id="q4a" style="top:300px;font-size:210px">ОДНЕ</div>
+        <div class="ink bl" id="q4b" style="top:304px;left:68px;font-size:210px">ОДНЕ</div>
+        <div class="ink pk" id="q4c" style="top:500px;font-size:170px">РЕЧЕННЯ</div>
+      </div>
+      <audio id="voice" class="clip" data-start="0" data-duration="8.4" data-track-index="9" src="assets/voice.m4a" data-volume="1"></audio>
+    </div>
+    <script>
+      const tl = gsap.timeline({ paused: true });
+      const F = 1 / 30;
+      // друк форми: з'являється за 1 кадр, а не плавно
+      const print = (sel, t) => { tl.set(sel, { opacity: 0 }, 0); tl.set(sel, { opacity: 1 }, t); };
+      // у першому плані голова вища — папір лише до 520 px; на дивані голова нижче — папір росте до 750 px
+      tl.fromTo("#pan", { scaleY: 0, transformOrigin: "top" }, { scaleY: 0.617, duration: 0.3, ease: "steps(5)" }, 0.0);
+      tl.to("#pan", { scaleY: 1, duration: 0.2, ease: "steps(4)" }, 1.36);
+      print("#p1", 0.42); print("#q1", 0.42 + 2 * F);
+      print("#p2", 2.40); print("#q2", 3.36);
+      print("#p3", 4.86); print("#q3", 5.96);
+      print("#p4", 6.88); print("#q4a", 7.62); print("#q4b", 7.62 + 2 * F); print("#q4c", 7.86);
+      window.__timelines = window.__timelines || {};
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>

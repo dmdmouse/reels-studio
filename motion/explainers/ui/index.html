@@ -1,0 +1,88 @@
+<!doctype html>
+<!-- Living UI screencast: виглядає як запис екрана, але кожен піксель зібраний в HTML, тож камера може наближатись,
+     а інтерфейс — діяти. Темне вікно чату: друкується запит, Claude відповідає планом, пункти по черзі отримують галочки,
+     зʼявляється картка готового відео, камера наїжджає на неї. Звук: друк, кліки, «дзинь» на готово. Музики немає. -->
+<html lang="uk" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      :root { --bg: #191919; --panel: #232323; --line: #343434; --text: #ececec; --dim: #9a9a9a; --or: #f36b35; --gr: #3ecf8e; }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1920px; overflow: hidden; background: #0d0d0d; }
+      #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; background: #0d0d0d; font-family: "Inter", sans-serif; color: var(--text); }
+      #cam { position: absolute; inset: 0; transform-origin: 0 0; }
+      .win { position: absolute; left: 50px; top: 190px; width: 980px; height: 1120px; border-radius: 34px; background: var(--bg); border: 2px solid var(--line); overflow: hidden;
+             box-shadow: 0 40px 120px #000c; }
+      .bar { height: 76px; display: flex; align-items: center; gap: 14px; padding: 0 30px; border-bottom: 2px solid var(--line); font-size: 28px; color: var(--dim); }
+      .dot { width: 20px; height: 20px; border-radius: 50%; background: #3a3a3a; }
+      .msg { position: absolute; left: 40px; right: 40px; font-size: 36px; line-height: 1.4; }
+      .me { background: #2c2c2c; border-radius: 26px; padding: 24px 30px; left: 180px; }
+      .row { display: flex; align-items: center; gap: 22px; font-size: 34px; margin-bottom: 18px; color: var(--dim); }
+      .box { width: 40px; height: 40px; border-radius: 50%; border: 3px dashed #5a5a5a; position: relative; flex: none; }
+      .box .ok { position: absolute; inset: -3px; border-radius: 50%; background: var(--gr); opacity: 0; display: flex; align-items: center; justify-content: center; color: #111; font-weight: 900; font-size: 26px; }
+      .card { position: absolute; left: 40px; top: 860px; width: 900px; height: 220px; border-radius: 24px; background: var(--panel); border: 2px solid var(--line); display: flex; align-items: center; gap: 28px; padding: 22px; }
+      .thumb { width: 100px; height: 176px; border-radius: 14px; background: center / cover no-repeat url("assets/thumb.jpg"); position: relative; }
+      .play { position: absolute; left: 50%; top: 50%; width: 0; height: 0; margin: -16px 0 0 -10px; border-left: 28px solid #fff; border-top: 16px solid transparent; border-bottom: 16px solid transparent; }
+      .meta b { display: block; font-size: 36px; color: var(--text); margin-bottom: 8px; }
+      .meta span { font-size: 28px; color: var(--dim); font-family: "JetBrains Mono", monospace; }
+      .input { position: absolute; left: 40px; right: 40px; bottom: 34px; height: 96px; border-radius: 26px; background: #262626; border: 2px solid var(--line); display: flex; align-items: center; padding: 0 30px; font-size: 32px; color: var(--dim); }
+      .c { opacity: 0; }
+      .cursor { position: absolute; width: 34px; height: 34px; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="10" data-width="1080" data-height="1920">
+      <div id="screen" class="clip" data-start="0" data-duration="10" data-track-index="0" style="position:absolute;inset:0">
+        <div id="cam">
+          <div class="win" id="win">
+            <div class="bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span style="margin-left:16px">Reels студія</span></div>
+            <div class="msg me" id="q" style="top:120px">Змонтуй рілс з inbox/01.mov: прибери паузи, субтитри pop</div>
+            <div class="msg" id="ans" style="top:330px;color:var(--dim)">Ось план, роблю:</div>
+            <div class="msg" id="plan" style="top:400px">
+              <div class="row" id="r1"><span class="box"><span class="ok" id="o1">✓</span></span>Обрати останні повні дублі</div>
+              <div class="row" id="r2"><span class="box"><span class="ok" id="o2">✓</span></span>Прибрати паузи</div>
+              <div class="row" id="r3"><span class="box"><span class="ok" id="o3">✓</span></span>Вертикаль 1080×1920, гучність −14 LUFS</div>
+              <div class="row" id="r4"><span class="box"><span class="ok" id="o4">✓</span></span>Субтитри pop</div>
+              <div class="row" id="r5"><span class="box"><span class="ok" id="o5">✓</span></span>Перевірити кадри</div>
+            </div>
+            <div class="card" id="card"><div class="thumb"><span class="play"></span></div><div class="meta"><b>Рілс готовий</b><span>output/01/01-v1.mp4 · 0:24</span></div></div>
+            <div class="input" id="inp">Напиши, що змінити…</div>
+          </div>
+        </div>
+      </div>
+      <audio id="a1" class="clip" data-start="0.40" data-duration="2.0" data-track-index="5" src="assets/sfx/typing.wav" data-volume="0.18"></audio>
+      <audio id="a2" class="clip" data-start="2.50" data-duration="0.4" data-track-index="6" src="assets/sfx/click.wav" data-volume="0.35"></audio>
+      <audio id="a3" class="clip" data-start="3.90" data-duration="0.4" data-track-index="6" src="assets/sfx/pop.wav" data-volume="0.22"></audio>
+      <audio id="a4" class="clip" data-start="4.50" data-duration="0.4" data-track-index="6" src="assets/sfx/pop.wav" data-volume="0.22"></audio>
+      <audio id="a5" class="clip" data-start="5.10" data-duration="0.4" data-track-index="6" src="assets/sfx/pop.wav" data-volume="0.22"></audio>
+      <audio id="a6" class="clip" data-start="5.70" data-duration="0.4" data-track-index="6" src="assets/sfx/pop.wav" data-volume="0.22"></audio>
+      <audio id="a7" class="clip" data-start="6.30" data-duration="0.4" data-track-index="6" src="assets/sfx/pop.wav" data-volume="0.22"></audio>
+      <audio id="a8" class="clip" data-start="6.90" data-duration="0.8" data-track-index="7" src="assets/sfx/ding.wav" data-volume="0.25"></audio>
+      <audio id="a9" class="clip" data-start="7.70" data-duration="0.6" data-track-index="8" src="assets/sfx/swish.wav" data-volume="0.2"></audio>
+    </div>
+    <script>
+      const tl = gsap.timeline({ paused: true });
+      tl.fromTo("#win", { opacity: 0, y: 60, scale: 0.97 }, { opacity: 1, y: 0, scale: 1, duration: 0.5, ease: "expo.out" }, 0.0);
+      // запит друкується в полі вводу, потім «надсилається» в чат
+      const q = document.getElementById("q"); const text = q.textContent; q.textContent = "";
+      [...text].forEach((ch, i) => { const s = document.createElement("span"); s.className = "c"; s.textContent = ch; q.appendChild(s); tl.set(s, { opacity: 1 }, 0.45 + i * 0.033); });
+      tl.set("#q", { opacity: 0 }, 0); tl.set("#q", { opacity: 1 }, 0.45);
+      tl.to("#inp", { borderColor: "#f36b35", duration: 0.15 }, 0.4).to("#inp", { borderColor: "#343434", duration: 0.2 }, 2.5);
+      tl.fromTo("#ans", { opacity: 0 }, { opacity: 1, duration: 0.2 }, 2.8);
+      ["#r1", "#r2", "#r3", "#r4", "#r5"].forEach((r, i) => tl.fromTo(r, { opacity: 0, x: -20 }, { opacity: 1, x: 0, duration: 0.3, ease: "expo.out" }, 3.0 + i * 0.12));
+      // пункти по черзі виконуються
+      ["#o1", "#o2", "#o3", "#o4", "#o5"].forEach((o, i) => {
+        const t = 3.9 + i * 0.6;
+        tl.fromTo(o, { opacity: 0, scale: 0.4 }, { opacity: 1, scale: 1, duration: 0.25, ease: "back.out(2.5)" }, t);
+        tl.to("#r" + (i + 1), { color: "#ececec", duration: 0.2 }, t);
+      });
+      tl.fromTo("#card", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.45, ease: "back.out(1.6)" }, 6.9);
+      // камера наїжджає на картку готового відео (рух камери, не інтерфейсу)
+      tl.to("#cam", { scale: 1.15, x: 540 - 540 * 1.15, y: 960 - 1160 * 1.15, duration: 1.0, ease: "power3.inOut" }, 7.7);   // центр картки (540, 1160) — у центр екрана
+      window.__timelines = window.__timelines || {};
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>

@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="uk" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1920px; overflow: hidden; background: #f4f3f0; }
+      #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; background: #f4f3f0; font-family: "Inter", sans-serif; color: #141414; text-align: center; }
+      #num { position: absolute; left: 0; width: 1080px; top: 330px; font-weight: 900; font-size: 620px; line-height: 1; letter-spacing: -0.05em; color: #f36b35; }
+      #lab { position: absolute; left: 60px; width: 960px; top: 1000px; font-weight: 800; font-size: 104px; line-height: 1.06; letter-spacing: -0.03em; }
+      #sub { position: absolute; left: 60px; width: 960px; top: 1180px; font-weight: 500; font-size: 58px; color: #6b6a66; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="3.2" data-width="1080" data-height="1920">
+      <div id="all" class="clip" data-start="0" data-duration="3.2" data-track-index="0" style="position:absolute;inset:0">
+        <!-- ЗАМІНИ: число й слова людини. Секунди нижче — коли вона їх каже, від початку вставки -->
+        <div id="num">1</div>
+        <div id="lab">речення</div>
+        <div id="sub">і все відео готове</div>
+      </div>
+      <div id="fade" class="clip" data-start="0" data-duration="0.2" data-track-index="9" style="position:absolute;inset:0;background:#f4f3f0"></div>
+      <audio id="a1" class="clip" data-start="0.28" data-duration="0.3" data-track-index="5" src="assets/sfx/impact.wav" data-volume="0.45"></audio>
+      <audio id="a2" class="clip" data-start="2.60" data-duration="0.2" data-track-index="6" src="assets/sfx/pop.wav" data-volume="0.3"></audio>
+    </div>
+    <script>
+      const tl = gsap.timeline({ paused: true });
+      tl.fromTo("#fade", { opacity: 1 }, { opacity: 0, duration: 0.1 }, 0);
+      tl.fromTo("#num", { scale: 1.5, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.14, ease: "power4.out" }, 0.28);
+      tl.fromTo("#all", { scale: 1 }, { scale: 1.07, duration: 3.2, ease: "none" }, 0);   // кадр не стоїть, поки людина говорить
+      tl.fromTo("#lab", { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.18, ease: "power3.out" }, 0.62);
+      tl.fromTo("#sub", { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 0.18, ease: "power3.out" }, 2.60);
+      window.__timelines = window.__timelines || {};
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>

@@ -1,0 +1,119 @@
+<!doctype html>
+<!-- Swiss grid: модульна сітка, один шрифт (Inter 900), один сигнальний колір. Слова «вбиваються» в клітинки, як у друкарні.
+     Шари: відео → червоні лінії сітки й слова → вирізана людина (слова за головою) → голос. -->
+<html lang="uk" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      :root { --ink: #111111; --signal: #e63323; --paper: #f4f2ee; }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1920px; overflow: hidden; background: #000; }
+      #root { position: relative; width: 1080px; height: 1920px; font-family: "Inter", sans-serif; }
+      .full { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; object-fit: cover; }
+      #plate { z-index: 1; }
+      #cut { z-index: 3; }
+      .layer { position: absolute; inset: 0; z-index: 2; }
+      .front { z-index: 4; }
+      /* сітка: 6 колонок, поля 72 px */
+      .vline { position: absolute; top: 150px; width: 2px; height: 1180px; background: var(--signal); transform-origin: top; }
+      .hline { position: absolute; left: 72px; height: 2px; width: 936px; background: var(--signal); transform-origin: left; }
+      .word { position: absolute; left: 72px; font-weight: 900; color: var(--ink); line-height: 0.86; letter-spacing: -0.045em; white-space: nowrap; }
+      .mask { position: absolute; left: 0; overflow: hidden; }
+      .square { position: absolute; width: 64px; height: 64px; background: var(--signal); }
+      .num { position: absolute; font-weight: 900; font-size: 34px; color: var(--signal); letter-spacing: -0.02em; }
+      .strike { position: absolute; height: 22px; background: var(--signal); transform-origin: left; }
+      .caption { position: absolute; left: 72px; top: 1236px; font-weight: 700; font-size: 40px; color: #fff; letter-spacing: -0.02em; }
+      .caption span { background: var(--ink); padding: 6px 14px; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="8.4" data-width="1080" data-height="1920">
+      <video id="plate" class="clip full" data-start="0" data-duration="8.4" data-track-index="0" src="assets/plate.mp4" muted playsinline></video>
+
+      <!-- сітка (весь ролик) -->
+      <div id="grid" class="clip layer" data-start="0" data-duration="8.4" data-track-index="1">
+        <div class="vline" id="v1" style="left:72px"></div>
+        <div class="vline" id="v2" style="left:540px"></div>
+        <div class="vline" id="v3" style="left:1006px"></div>
+        <div class="hline" id="h1" style="top:150px"></div>
+      </div>
+
+      <!-- 1: «описую словами» -->
+      <div id="b1" class="clip layer" data-start="0" data-duration="1.34" data-track-index="2">
+        <div class="mask" style="top:166px;height:214px;width:1080px"><div class="word" id="b1a" style="font-size:200px;top:24px">ОПИСУЮ</div></div>
+        <div class="mask" style="top:348px;height:214px;width:1080px"><div class="word" id="b1b" style="font-size:200px;top:24px">СЛОВАМИ</div></div>
+        <div class="square" id="b1s" style="left:944px;top:600px"></div>
+      </div>
+
+      <!-- 2: «жодну програму для монтажу» -->
+      <div id="b2" class="clip layer" data-start="1.34" data-duration="3.48" data-track-index="2">
+        <div class="mask" style="top:208px;height:204px;width:1080px"><div class="word" id="b2n" style="font-size:120px;top:44px">НЕ ПОТРІБНО</div></div>
+        <div class="mask" style="top:208px;height:204px;width:1080px"><div class="word" id="b2a" style="font-size:176px;top:24px">ЖОДНОЇ</div></div>
+        <div class="mask" style="top:376px;height:204px;width:1080px"><div class="word" id="b2b" style="font-size:176px;top:24px">ПРОГРАМИ</div></div>
+        <div class="strike" id="b2x" style="left:60px;top:470px;width:960px"></div>
+        <div class="num" id="b2c" style="left:72px;top:600px;font-size:64px">ДЛЯ МОНТАЖУ</div>
+      </div>
+
+      <!-- 3: «швидка склейка / більші титри» -->
+      <div id="b3" class="clip layer" data-start="4.80" data-duration="2.04" data-track-index="2">
+        <div class="square" id="b3s1" style="left:72px;top:250px;width:44px;height:44px"></div>
+        <div class="mask" style="top:196px;height:144px;width:1080px"><div class="word" id="b3a" style="font-size:84px;top:40px;left:140px">ШВИДКА СКЛЕЙКА</div></div>
+        <div class="square" id="b3s2" style="left:72px;top:418px;width:44px;height:44px"></div>
+        <div class="mask" style="top:364px;height:144px;width:1080px"><div class="word" id="b3b" style="font-size:84px;top:40px;left:140px">БІЛЬШІ ТИТРИ</div></div>
+      </div>
+
+      <!-- 4: «одне речення» -->
+      <div id="b4" class="clip layer" data-start="6.84" data-duration="1.56" data-track-index="2">
+        <div class="num" id="b4n" style="left:72px;top:380px;font-size:48px">ЦЕ ПРОСТО</div>
+        <div class="mask" style="top:420px;height:274px;width:1080px"><div class="word" id="b4a" style="font-size:250px;top:24px">ОДНЕ</div></div>
+        <div class="mask" style="top:630px;height:274px;width:1080px"><div class="word" id="b4b" style="font-size:198px;top:46px">РЕЧЕННЯ<span style="color:var(--signal)">.</span></div></div>
+      </div>
+
+      <video id="cut" class="clip full" data-start="0" data-duration="8.4" data-track-index="3" src="assets/cutout.webm" muted playsinline data-layout-allow-occlusion></video>
+
+      <!-- субтитр знизу: те, що зараз звучить -->
+      <div id="cap" class="clip layer front" data-start="0.1" data-duration="8.3" data-track-index="4">
+        <div class="caption" id="cap1"><span>я просто описую це словами</span></div>
+        <div class="caption" id="cap2"><span>мені більше не потрібно відкривати</span></div>
+        <div class="caption" id="cap3"><span>жодну програму для монтажу</span></div>
+        <div class="caption" id="cap4"><span>швидка склейка чи більші титри</span></div>
+        <div class="caption" id="cap5"><span>це просто ще одне речення</span></div>
+      </div>
+
+      <audio id="voice" class="clip" data-start="0" data-duration="8.4" data-track-index="9" src="assets/voice.m4a" data-volume="1"></audio>
+    </div>
+    <script>
+      const tl = gsap.timeline({ paused: true });
+      const snap = "expo.inOut";   // друкарський «удар»: швидко в середині, м'яко на кінцях
+      const land = "expo.out";
+      // сітка прокреслюється на старті
+      tl.fromTo(["#v1", "#v2", "#v3"], { scaleY: 0 }, { scaleY: 1, duration: 0.5, ease: land, stagger: 0.06 }, 0.0);
+      tl.fromTo("#h1", { scaleX: 0 }, { scaleX: 1, duration: 0.5, ease: land }, 0.1);
+      // слово виїжджає з-під лінії маски — як рядок, що вбивають у форму
+      const rise = (sel, t) => tl.fromTo(sel, { yPercent: 230 }, { yPercent: 0, duration: 0.32, ease: snap }, t);
+      rise("#b1a", 0.40); rise("#b1b", 0.90);
+      tl.fromTo("#b1s", { scale: 0 }, { scale: 1, duration: 0.2, ease: land }, 0.98);
+      rise("#b2n", 2.40);
+      tl.to("#b2n", { yPercent: -140, duration: 0.28, ease: "expo.in" }, 3.06);   // звільняє рядок для «ЖОДНОЇ»
+      rise("#b2a", 3.34); rise("#b2b", 3.68);
+      tl.fromTo("#b2x", { scaleX: 0 }, { scaleX: 1, duration: 0.3, ease: snap }, 4.00);
+      tl.fromTo("#b2c", { opacity: 0 }, { opacity: 1, duration: 0.12 }, 4.26);
+      tl.fromTo("#b3s1", { scale: 0 }, { scale: 1, duration: 0.18, ease: land }, 4.84);
+      rise("#b3a", 4.86);
+      tl.fromTo("#b3s2", { scale: 0 }, { scale: 1, duration: 0.18, ease: land }, 5.94);
+      rise("#b3b", 5.96);
+      tl.fromTo("#b4n", { opacity: 0 }, { opacity: 1, duration: 0.12 }, 6.88);
+      rise("#b4a", 7.62); rise("#b4b", 7.86);
+      // субтитри: по одній фразі; час — від початку ролика (це головний таймлайн)
+      const caps = [["#cap1", 0.1, 1.34], ["#cap2", 1.34, 2.88], ["#cap3", 2.88, 4.70], ["#cap4", 4.84, 6.70], ["#cap5", 6.84, 8.36]];
+      for (const [sel, a, b] of caps) {
+        tl.fromTo(sel, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.16, ease: land }, a);
+        tl.to(sel, { opacity: 0, duration: 0.1, ease: "power2.in" }, b - 0.12);
+      }
+      window.__timelines = window.__timelines || {};
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>

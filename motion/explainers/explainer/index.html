@@ -1,0 +1,119 @@
+<!doctype html>
+<!-- Flat vector explainer: прості пласкі фігури без градієнтів і тіней-сяйва, пружний упевнений рух.
+     Історія в одній сцені: телефон записує → голос стає хвилею → хвиля стає стрічкою монтажу → ножиці вирізають паузи →
+     на екрані телефона зʼявляються титри → галочка «готово». Заголовок зверху називає крок. Звук — на кожній події, музики немає. -->
+<html lang="uk" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      :root { --bg: #f4f1ea; --ink: #1f1f1f; --or: #f36b35; --bl: #3e7bfa; --gr: #2bb673; --mute: #d8d2c4; }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1920px; overflow: hidden; background: var(--bg); }
+      #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; background: var(--bg); font-family: "Montserrat", sans-serif; color: var(--ink); }
+      .step { position: absolute; left: 0; width: 1080px; top: 230px; text-align: center; font-weight: 800; font-size: 92px; letter-spacing: -0.03em; }
+      .step small { display: block; font-size: 34px; font-weight: 700; letter-spacing: 0.18em; color: var(--or); margin-bottom: 18px; }
+      .phone { position: absolute; left: 330px; top: 520px; width: 420px; height: 760px; border-radius: 64px; background: var(--ink); }
+      .screen { position: absolute; left: 22px; top: 22px; right: 22px; bottom: 22px; border-radius: 46px; background: #fff; overflow: hidden; }
+      .face { position: absolute; left: 50%; top: 210px; width: 150px; height: 150px; margin-left: -75px; border-radius: 50%; background: var(--mute); }
+      .body { position: absolute; left: 50%; top: 380px; width: 270px; height: 340px; margin-left: -135px; border-radius: 135px 135px 0 0; background: var(--mute); }
+      .rec { position: absolute; left: 28px; top: 28px; width: 34px; height: 34px; border-radius: 50%; background: #e8202a; }
+      .bar { position: absolute; bottom: 0; width: 26px; border-radius: 13px; background: var(--bl); transform-origin: 50% 100%; }
+      .seg { position: absolute; height: 74px; border-radius: 18px; }
+      .cap { position: absolute; left: 30px; right: 30px; top: 500px; height: 92px; border-radius: 16px; background: var(--ink); color: #fff; font-weight: 800;
+             font-size: 44px; display: flex; align-items: center; justify-content: center; }
+      .cap b { color: #ffd84d; margin-left: 10px; }
+      .check { position: absolute; left: 700px; top: 1090px; width: 220px; height: 220px; border-radius: 50%; background: var(--gr); }
+      svg { position: absolute; overflow: visible; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="10" data-width="1080" data-height="1920">
+      <div id="scene" class="clip" data-start="0" data-duration="10" data-track-index="0" style="position:absolute;inset:0">
+        <div class="step" id="st1"><small>КРОК 1</small>Знімаєш</div>
+        <div class="step" id="st2"><small>КРОК 2</small>Claude слухає</div>
+        <div class="step" id="st3"><small>КРОК 3</small>Ріже паузи</div>
+        <div class="step" id="st4"><small>КРОК 4</small>Ставить титри</div>
+        <div class="phone" id="phone">
+          <div class="screen">
+            <div class="face"></div><div class="body"></div>
+            <div class="rec" id="rec"></div>
+            <div class="cap" id="cap">одне <b>речення</b></div>
+          </div>
+        </div>
+        <!-- хвиля голосу -->
+        <div id="wave" style="position:absolute;left:150px;top:1100px;width:780px;height:220px">
+          <div class="bar" id="b0" style="left:0px;height:90px"></div><div class="bar" id="b1" style="left:50px;height:160px"></div>
+          <div class="bar" id="b2" style="left:100px;height:120px"></div><div class="bar" id="b3" style="left:150px;height:30px;background:var(--mute)"></div>
+          <div class="bar" id="b4" style="left:200px;height:30px;background:var(--mute)"></div><div class="bar" id="b5" style="left:250px;height:180px"></div>
+          <div class="bar" id="b6" style="left:300px;height:110px"></div><div class="bar" id="b7" style="left:350px;height:200px"></div>
+          <div class="bar" id="b8" style="left:400px;height:30px;background:var(--mute)"></div><div class="bar" id="b9" style="left:450px;height:30px;background:var(--mute)"></div>
+          <div class="bar" id="b10" style="left:500px;height:30px;background:var(--mute)"></div><div class="bar" id="b11" style="left:550px;height:140px"></div>
+          <div class="bar" id="b12" style="left:600px;height:190px"></div><div class="bar" id="b13" style="left:650px;height:100px"></div>
+          <div class="bar" id="b14" style="left:700px;height:150px"></div><div class="bar" id="b15" style="left:750px;height:70px"></div>
+        </div>
+        <!-- стрічка монтажу: фрази (сині) і паузи (сірі) -->
+        <div id="track" style="position:absolute;left:90px;top:1220px;width:900px;height:74px">
+          <div class="seg" id="g1" style="left:0;width:250px;background:var(--bl)"></div>
+          <div class="seg" id="p1" style="left:262px;width:110px;background:var(--mute)"></div>
+          <div class="seg" id="g2" style="left:384px;width:200px;background:var(--bl)"></div>
+          <div class="seg" id="p2" style="left:596px;width:120px;background:var(--mute)"></div>
+          <div class="seg" id="g3" style="left:728px;width:172px;background:var(--bl)"></div>
+        </div>
+        <svg id="sc" width="160" height="160" style="left:300px;top:1090px" viewBox="0 0 160 160">
+          <circle cx="40" cy="120" r="26" fill="none" stroke="#1f1f1f" stroke-width="12"/><circle cx="120" cy="120" r="26" fill="none" stroke="#1f1f1f" stroke-width="12"/>
+          <path d="M 56 100 L 120 10" stroke="#f36b35" stroke-width="14" stroke-linecap="round"/><path d="M 104 100 L 40 10" stroke="#f36b35" stroke-width="14" stroke-linecap="round"/>
+        </svg>
+        <div class="check" id="chk"><svg width="220" height="220" viewBox="0 0 220 220"><path id="ckp" d="M 62 114 L 98 150 L 162 78" fill="none" stroke="#fff" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      </div>
+      <audio id="a1" class="clip" data-start="0.30" data-duration="0.4" data-track-index="5" src="assets/sfx/pop.wav" data-volume="0.30"></audio>
+      <audio id="a2" class="clip" data-start="2.30" data-duration="0.6" data-track-index="6" src="assets/sfx/swish.wav" data-volume="0.25"></audio>
+      <audio id="a3" class="clip" data-start="4.30" data-duration="0.4" data-track-index="5" src="assets/sfx/click.wav" data-volume="0.35"></audio>
+      <audio id="a4" class="clip" data-start="4.90" data-duration="0.4" data-track-index="5" src="assets/sfx/click.wav" data-volume="0.35"></audio>
+      <audio id="a5" class="clip" data-start="5.40" data-duration="0.6" data-track-index="6" src="assets/sfx/swish.wav" data-volume="0.22"></audio>
+      <audio id="a6" class="clip" data-start="6.60" data-duration="0.4" data-track-index="5" src="assets/sfx/pop.wav" data-volume="0.30"></audio>
+      <audio id="a7" class="clip" data-start="8.20" data-duration="0.8" data-track-index="7" src="assets/sfx/ding.wav" data-volume="0.25"></audio>
+    </div>
+    <script>
+      const tl = gsap.timeline({ paused: true });
+      const spring = "back.out(1.7)";
+      // кроки: новий заголовок «вискакує», старий іде вгору
+      const steps = ["#st1", "#st2", "#st3", "#st4"], at = [0.2, 2.2, 4.1, 6.4];
+      steps.forEach((s, i) => {
+        tl.fromTo(s, { opacity: 0, y: 40, scale: 0.92 }, { opacity: 1, y: 0, scale: 1, duration: 0.45, ease: spring }, at[i]);
+        if (i < 3) tl.to(s, { opacity: 0, y: -40, duration: 0.25, ease: "power2.in" }, at[i + 1] - 0.2);
+      });
+      tl.to("#st4", { opacity: 0, y: -40, duration: 0.25, ease: "power2.in" }, 7.9);
+      // 1: телефон зʼявляється, червона точка запису блимає
+      tl.fromTo("#phone", { y: 300, opacity: 0, rotation: -6 }, { y: 0, opacity: 1, rotation: 0, duration: 0.6, ease: spring }, 0.3);
+      for (let t = 0.9; t < 2.1; t += 0.4) tl.set("#rec", { opacity: 0.2 }, t).set("#rec", { opacity: 1 }, t + 0.2);
+      // 2: телефон відʼїжджає вгору, з нього виходить хвиля голосу
+      tl.to("#phone", { y: -120, scale: 0.78, duration: 0.6, ease: "power3.inOut" }, 2.2);
+      const bars = [...Array(16).keys()].map((i) => "#b" + i);
+      tl.fromTo(bars, { scaleY: 0 }, { scaleY: 1, duration: 0.4, ease: spring, stagger: 0.04 }, 2.4);
+      // 3: хвиля стискається в стрічку, ножиці вирізають паузи, фрази зʼїжджаються
+      tl.to(bars, { scaleY: 0, duration: 0.3, ease: "power2.in", stagger: 0.02 }, 3.9);
+      tl.fromTo(["#g1", "#p1", "#g2", "#p2", "#g3"], { scaleX: 0, transformOrigin: "0% 50%" }, { scaleX: 1, duration: 0.35, ease: "expo.out", stagger: 0.06 }, 4.0);
+      tl.fromTo("#sc", { opacity: 0, x: 0 }, { opacity: 1, x: 0, duration: 0.15 }, 4.2);
+      tl.to("#sc", { x: 0, rotation: -12, duration: 0.12, yoyo: true, repeat: 1 }, 4.3);
+      tl.to("#p1", { scaleY: 0, opacity: 0, duration: 0.2 }, 4.35);
+      tl.to("#sc", { x: 330, duration: 0.4, ease: "power2.inOut" }, 4.5);
+      tl.to("#sc", { rotation: -12, duration: 0.12, yoyo: true, repeat: 1 }, 4.9);
+      tl.to("#p2", { scaleY: 0, opacity: 0, duration: 0.2 }, 4.95);
+      tl.to("#sc", { opacity: 0, duration: 0.2 }, 5.3);
+      tl.to("#g2", { x: -122, duration: 0.45, ease: spring }, 5.4);
+      tl.to("#g3", { x: -254, duration: 0.45, ease: spring }, 5.45);
+      // 4: стрічка «заходить» у телефон, на екрані — титри
+      tl.to("#track", { y: -360, scale: 0.5, opacity: 0, duration: 0.5, ease: "power3.in" }, 6.2);
+      tl.to("#phone", { y: 0, scale: 1, duration: 0.6, ease: "power3.inOut" }, 6.3);
+      tl.fromTo("#cap", { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.4, ease: spring }, 6.6);
+      // готово
+      tl.fromTo("#chk", { scale: 0 }, { scale: 1, duration: 0.45, ease: "back.out(2.2)" }, 8.2);
+      const ck = document.getElementById("ckp"), L = ck.getTotalLength(); ck.style.strokeDasharray = L;
+      tl.fromTo(ck, { strokeDashoffset: L }, { strokeDashoffset: 0, duration: 0.3, ease: "power2.out" }, 8.35);
+      window.__timelines = window.__timelines || {};
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>

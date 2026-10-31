@@ -1,0 +1,84 @@
+<!doctype html>
+<!-- Y2K: хромовані літери з відблиском, що пробігає по них, чотирипроменеві іскри, «бульбашкові» плашки, бузково-блакитна гама.
+     Слова за головою людини — хром ніби висить у кімнаті. Рух — пружний, з легким перельотом. -->
+<html lang="uk" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1920px; overflow: hidden; background: #000; }
+      #root { position: relative; width: 1080px; height: 1920px; font-family: "Montserrat", sans-serif; }
+      .full { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; object-fit: cover; }
+      #plate { z-index: 1; } #cut { z-index: 3; }
+      .layer { position: absolute; inset: 0; z-index: 2; }
+      .front { z-index: 4; }
+      .tint { position: absolute; inset: 0; background: linear-gradient(180deg, #b9a7ff66 0%, #8fd8ff33 45%, #0000 70%); mix-blend-mode: soft-light; }
+      .chrome { position: absolute; left: 0; width: 1080px; text-align: center; font-weight: 900; font-style: italic; letter-spacing: -0.04em; line-height: 0.9; white-space: nowrap; }
+      .chrome span.t { background: linear-gradient(180deg, #ffffff 0%, #dfe6ff 30%, #7f88a8 50%, #f4f7ff 56%, #b7c2e8 78%, #ffffff 100%), linear-gradient(100deg, #0000 40%, #fff 50%, #0000 60%);
+                       background-size: 100% 100%, 300% 100%; background-repeat: no-repeat; background-position: 0 0, var(--sheen, 120%) 0;
+                       -webkit-background-clip: text; background-clip: text; color: transparent;
+                       -webkit-text-stroke: 3px #5b4fa8; filter: drop-shadow(0 10px 0 #5b4fa8) drop-shadow(0 18px 24px #0006); }
+      .spark { position: absolute; width: 90px; height: 90px; }
+      .spark::before, .spark::after { content: ""; position: absolute; left: 50%; top: 50%; background: #fff; border-radius: 50%; transform: translate(-50%, -50%); box-shadow: 0 0 18px #fff, 0 0 40px #b9a7ff; }
+      .spark::before { width: 12px; height: 90px; } .spark::after { width: 90px; height: 12px; }
+      .bub { position: absolute; padding: 22px 46px; border-radius: 80px; font-weight: 800; font-size: 60px; color: #2a1f66; white-space: nowrap;
+             background: linear-gradient(180deg, #ffffffee, #d9d2ffd0); border: 3px solid #fff; box-shadow: 0 14px 30px #2a1f6640, inset 0 -10px 20px #b9a7ff80; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="8.4" data-width="1080" data-height="1920">
+      <video id="plate" class="clip full" data-start="0" data-duration="8.4" data-track-index="0" src="assets/plate.mp4" muted playsinline></video>
+
+      <div id="bg" class="clip layer" data-start="0" data-duration="8.4" data-track-index="1"><div class="tint"></div></div>
+
+      <div id="b1" class="clip layer" data-start="0.3" data-duration="1.04" data-track-index="2">
+        <div class="chrome" id="c1" style="top:250px;font-size:170px"><span class="t" id="c1t">ОПИСУЮ</span></div>
+        <div class="chrome" id="c1b" style="top:420px;font-size:150px"><span class="t" id="c1bt">СЛОВАМИ</span></div>
+      </div>
+      <div id="b2" class="clip layer" data-start="2.36" data-duration="2.44" data-track-index="2">
+        <div class="chrome" id="c2" style="top:300px;font-size:150px"><span class="t" id="c2t">ЖОДНОЇ</span></div>
+        <div class="chrome" id="c2b" style="top:460px;font-size:130px"><span class="t" id="c2bt">ПРОГРАМИ</span></div>
+      </div>
+      <div id="b4" class="clip layer" data-start="6.86" data-duration="1.54" data-track-index="2">
+        <div class="chrome" id="c4" style="top:300px;font-size:200px"><span class="t" id="c4t">ОДНЕ</span></div>
+        <div class="chrome" id="c4b" style="top:500px;font-size:150px"><span class="t" id="c4bt">РЕЧЕННЯ</span></div>
+      </div>
+
+      <video id="cut" class="clip full" data-start="0" data-duration="8.4" data-track-index="3" src="assets/cutout.webm" muted playsinline data-layout-allow-occlusion></video>
+
+      <div id="sp" class="clip layer front" data-start="0" data-duration="8.4" data-track-index="4">
+        <div class="spark" id="s1" style="left:120px;top:230px"></div>
+        <div class="spark" id="s2" style="left:880px;top:420px"></div>
+        <div class="spark" id="s3" style="left:820px;top:200px"></div>
+        <div class="spark" id="s4" style="left:160px;top:560px"></div>
+      </div>
+      <div id="b3" class="clip layer front" data-start="4.82" data-duration="2.02" data-track-index="5">
+        <div class="bub" id="u1" style="left:110px;top:300px">швидка склейка ✦</div>
+        <div class="bub" id="u2" style="left:300px;top:470px">більші титри ✦</div>
+      </div>
+      <div id="b2s" class="clip layer front" data-start="2.36" data-duration="1.0" data-track-index="5">
+        <div class="bub" id="u0" style="left:300px;top:330px">не потрібно</div>
+      </div>
+      <audio id="voice" class="clip" data-start="0" data-duration="8.4" data-track-index="9" src="assets/voice.m4a" data-volume="1"></audio>
+    </div>
+    <script>
+      const tl = gsap.timeline({ paused: true });
+      const pop = (sel, t) => tl.fromTo(sel, { scale: 0.4, opacity: 0, rotation: -6 }, { scale: 1, opacity: 1, rotation: 0, duration: 0.45, ease: "back.out(2.2)" }, t);
+      const sheen = (sel, t) => tl.fromTo(sel, { "--sheen": "120%" }, { "--sheen": "-20%", duration: 0.7, ease: "power2.inOut" }, t);
+      pop("#c1", 0.40); sheen("#c1t", 0.55); pop("#c1b", 0.90); sheen("#c1bt", 1.0);
+      pop("#u0", 2.40);
+      pop("#c2", 3.36); sheen("#c2t", 3.5); pop("#c2b", 3.70); sheen("#c2bt", 3.85);
+      pop("#u1", 4.86); pop("#u2", 5.96);
+      pop("#c4", 7.62); sheen("#c4t", 7.7); pop("#c4b", 7.86); sheen("#c4bt", 7.95);
+      // іскри спалахують на ключових словах (без нескінченних повторів)
+      [["#s1", 0.92], ["#s2", 1.0], ["#s3", 3.70], ["#s4", 4.28], ["#s1", 5.28], ["#s2", 6.36], ["#s3", 7.64], ["#s4", 7.88]].forEach(([s, t]) => {
+        tl.fromTo(s, { scale: 0, rotation: 0, opacity: 1 }, { scale: 1, rotation: 45, duration: 0.25, ease: "back.out(3)" }, t);
+        tl.to(s, { scale: 0, opacity: 0, duration: 0.25, ease: "power2.in" }, t + 0.35);
+      });
+      window.__timelines = window.__timelines || {};
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>

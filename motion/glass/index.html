@@ -1,0 +1,94 @@
+<!doctype html>
+<!-- Glassmorphism / інтерфейс у просторі: матові скляні картки висять у кімнаті за людиною (людина перекриває їх — є глибина).
+     Програми для монтажу розлітаються, коли звучить «жодну», перемикачі вмикаються на словах, а в кінці — поле запиту
+     з одним реченням і помаранчевою кнопкою. Рух — м'які пружини без різких ривків. -->
+<html lang="uk" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      :root { --accent: #f36b35; }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1920px; overflow: hidden; background: #000; }
+      #root { position: relative; width: 1080px; height: 1920px; font-family: "Inter", sans-serif; color: #fff; }
+      .full { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; object-fit: cover; }
+      #plate { z-index: 1; } #cut { z-index: 3; }
+      .layer { position: absolute; inset: 0; z-index: 2; }
+      .front { z-index: 4; }
+      .glass { position: absolute; background: rgba(22, 22, 28, 0.42); border: 1.5px solid rgba(255, 255, 255, 0.32); border-radius: 38px;
+               backdrop-filter: blur(26px) saturate(1.3); -webkit-backdrop-filter: blur(26px) saturate(1.3);
+               box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.35); }
+      .pill { padding: 26px 40px; font-size: 58px; font-weight: 700; letter-spacing: -0.02em; white-space: nowrap; display: flex; align-items: center; gap: 22px; }
+      .mic { width: 34px; height: 54px; border: 6px solid #fff; border-radius: 20px; position: relative; }
+      .app { width: 250px; height: 250px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; font-size: 32px; font-weight: 700; }
+      .ico { width: 104px; height: 104px; border-radius: 28px; display: flex; align-items: center; justify-content: center; font-size: 54px; font-weight: 900; }
+      .label { position: absolute; left: 0; width: 1080px; text-align: center; font-size: 66px; font-weight: 800; letter-spacing: -0.03em; text-shadow: 0 6px 30px rgba(0,0,0,.45); }
+      .row { padding: 30px 36px; width: 760px; display: flex; align-items: center; justify-content: space-between; font-size: 54px; font-weight: 700; letter-spacing: -0.02em; }
+      .tog { width: 130px; height: 72px; border-radius: 40px; background: rgba(255, 255, 255, 0.25); position: relative; }
+      .knob { position: absolute; left: 6px; top: 6px; width: 60px; height: 60px; border-radius: 50%; background: #fff; box-shadow: 0 4px 10px rgba(0,0,0,.3); }
+      .on { position: absolute; inset: 0; border-radius: 40px; background: var(--accent); opacity: 0; }
+      .prompt { padding: 26px 26px 26px 44px; width: 960px; display: flex; align-items: center; justify-content: space-between; font-size: 54px; font-weight: 600; }
+      .send { width: 96px; height: 96px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 54px; font-weight: 900; }
+      .c { opacity: 0; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="8.4" data-width="1080" data-height="1920">
+      <video id="plate" class="clip full" data-start="0" data-duration="8.4" data-track-index="0" src="assets/plate.mp4" muted playsinline></video>
+
+      <!-- 1: голосова «капсула» -->
+      <div id="b1" class="clip layer" data-start="0.2" data-duration="1.14" data-track-index="1">
+        <div class="glass pill" id="g1" style="left:170px;top:300px"><span class="mic"></span><span>описую словами</span></div>
+      </div>
+
+      <!-- 2: програми для монтажу, які розлітаються -->
+      <div id="b2" class="clip layer" data-start="2.8" data-duration="2.0" data-track-index="1">
+        <div class="glass app" id="a1" style="left:80px;top:300px"><div class="ico" style="background:#2a1a5e;color:#c9b6ff">Pr</div>Premiere</div>
+        <div class="glass app" id="a2" style="left:415px;top:220px"><div class="ico" style="background:#111;color:#fff">✂</div>CapCut</div>
+        <div class="glass app" id="a3" style="left:750px;top:300px"><div class="ico" style="background:#3a2a10;color:#ffcf7a">FC</div>Final Cut</div>
+        <div class="label" id="lb2" style="top:420px">жодну програму</div>
+      </div>
+
+      <!-- 3: перемикачі -->
+      <div id="b3" class="clip layer" data-start="4.8" data-duration="2.04" data-track-index="1">
+        <div class="glass row" id="r1" style="left:160px;top:250px"><span>Швидка склейка</span><span class="tog"><span class="on" id="on1"></span><span class="knob" id="kn1"></span></span></div>
+        <div class="glass row" id="r2" style="left:160px;top:430px"><span>Більші титри</span><span class="tog"><span class="on" id="on2"></span><span class="knob" id="kn2"></span></span></div>
+      </div>
+
+      <video id="cut" class="clip full" data-start="0" data-duration="8.4" data-track-index="2" src="assets/cutout.webm" muted playsinline data-layout-allow-occlusion></video>
+
+      <!-- 4: поле запиту поверх людини -->
+      <div id="b4" class="clip layer front" data-start="6.84" data-duration="1.56" data-track-index="3">
+        <div class="glass prompt" id="pr" style="left:60px;top:1100px"><span id="prt">одне речення</span><span class="send" id="snd">↑</span></div>
+      </div>
+      <audio id="voice" class="clip" data-start="0" data-duration="8.4" data-track-index="9" src="assets/voice.m4a" data-volume="1"></audio>
+    </div>
+    <script>
+      const tl = gsap.timeline({ paused: true });
+      const spring = "back.out(1.5)";
+      tl.fromTo("#g1", { opacity: 0, scale: 0.85, y: 30 }, { opacity: 1, scale: 1, y: 0, duration: 0.45, ease: spring }, 0.38);
+      // програми з'являються на «відкривати», розлітаються на «жодну»
+      [["#a1", -260, 80, -18], ["#a2", 0, -300, 6], ["#a3", 260, 80, 18]].forEach(([s, x, y, r], i) => {
+        tl.fromTo(s, { opacity: 0, scale: 0.7 }, { opacity: 1, scale: 1, duration: 0.4, ease: spring }, 2.90 + i * 0.07);
+        tl.to(s, { x, y, rotation: r, scale: 0.6, opacity: 0, duration: 0.45, ease: "power3.in" }, 3.36 + i * 0.04);
+      });
+      tl.fromTo("#lb2", { opacity: 0, filter: "blur(10px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.25, ease: "power3.out" }, 3.70);
+      // перемикачі: картка влітає на першому слові, вмикається на другому
+      const toggle = (row, on, kn, t1, t2) => {
+        tl.fromTo(row, { opacity: 0, x: -40 }, { opacity: 1, x: 0, duration: 0.4, ease: "expo.out" }, t1);
+        tl.fromTo(kn, { x: 0 }, { x: 58, duration: 0.28, ease: "back.out(1.8)" }, t2);
+        tl.fromTo(on, { opacity: 0 }, { opacity: 1, duration: 0.2 }, t2);
+      };
+      toggle("#r1", "#on1", "#kn1", 4.86, 5.28);
+      toggle("#r2", "#on2", "#kn2", 5.96, 6.36);
+      // поле запиту: текст друкується, кнопка підстрибує на «речення»
+      tl.fromTo("#pr", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.4, ease: "expo.out" }, 6.88);
+      const prt = document.getElementById("prt"); const text = prt.textContent; prt.textContent = "";
+      [...text].forEach((ch, i) => { const s = document.createElement("span"); s.className = "c"; s.textContent = ch; prt.appendChild(s); tl.set(s, { opacity: 1 }, 7.50 + i * 0.03); });
+      tl.fromTo("#snd", { scale: 1 }, { scale: 1.22, duration: 0.14, ease: "power2.out" }, 7.90).to("#snd", { scale: 1, duration: 0.3, ease: "back.out(2)" }, 8.04);
+      window.__timelines = window.__timelines || {};
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>

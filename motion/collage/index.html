@@ -1,0 +1,108 @@
+<!doctype html>
+<!-- Collage / paper cut-out: людина — наліпка з білим контуром на крафтовому папері, слова — рвані смужки паперу
+     й «лист з вирізаних літер». Рух покадровий, 12 к/с, як stop-motion: шматки «ляскають» на папір, а не плавно їдуть. -->
+<html lang="uk" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1920px; overflow: hidden; background: #e2d6be; }
+      #root { position: relative; width: 1080px; height: 1920px; font-family: "Oswald", sans-serif; }
+      .full { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; object-fit: cover; }
+      #paper { z-index: 0; }
+      #stickwrap { position: absolute; inset: 0; z-index: 3; }
+      #stick { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; }
+      .layer { position: absolute; inset: 0; z-index: 2; }
+      .front { z-index: 4; }
+      .strip { position: absolute; padding: 18px 40px 22px; font-weight: 700; line-height: 1; letter-spacing: 0.01em; white-space: nowrap;
+               box-shadow: 0 10px 0 -2px #0002, 0 16px 26px #0003; }
+      .torn { clip-path: polygon(0% 6%, 4% 0%, 11% 5%, 19% 1%, 27% 6%, 36% 0%, 44% 4%, 53% 0%, 61% 6%, 70% 1%, 78% 5%, 86% 0%, 94% 5%, 100% 1%,
+                                 99% 94%, 95% 100%, 87% 95%, 79% 100%, 70% 94%, 62% 99%, 53% 95%, 45% 100%, 36% 95%, 28% 100%, 19% 94%, 10% 99%, 3% 95%, 0% 100%); }
+      .tape { position: absolute; width: 150px; height: 46px; background: #f3ecd6c8; box-shadow: 0 2px 6px #0002; }
+      .letters { position: absolute; left: 70px; display: flex; gap: 8px; flex-wrap: nowrap; }
+      .l { display: inline-block; padding: 8px 12px 12px; font-size: 92px; line-height: 1; box-shadow: 0 6px 12px #0003; }
+      .arrow { position: absolute; width: 230px; height: 90px; background: #151515;
+               clip-path: polygon(0 38%, 70% 38%, 68% 8%, 100% 50%, 68% 92%, 70% 62%, 0 62%); }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="8.4" data-width="1080" data-height="1920">
+      <img id="paper" class="clip full" data-start="0" data-duration="8.4" data-track-index="0" src="assets/paper.jpg" alt="" />
+
+      <!-- 1: смужки над головою (за наліпкою) -->
+      <div id="b1" class="clip layer" data-start="0" data-duration="1.34" data-track-index="1">
+        <div class="strip torn" id="b1a" style="left:80px;top:250px;font-size:150px;background:#151515;color:#f1e9d8">ОПИСУЮ</div>
+        <div class="strip torn" id="b1b" style="left:240px;top:430px;font-size:130px;background:#d7322a;color:#fff6e6">СЛОВАМИ</div>
+        <div class="tape" id="b1t" style="left:610px;top:236px"></div>
+      </div>
+
+      <!-- 2: «лист» з вирізаних літер -->
+      <div id="b2" class="clip layer" data-start="1.34" data-duration="3.46" data-track-index="1">
+        <div class="strip torn" id="b2a" style="left:90px;top:220px;font-size:84px;background:#f2c230;color:#151515">НЕ ПОТРІБНО</div>
+        <div class="letters" id="row1" style="top:360px">
+          <span class="l" id="L1" style="background:#151515;color:#fff;font-family:Oswald">Ж</span>
+          <span class="l" id="L2" style="background:#fff7e8;color:#151515;font-family:'Playfair Display';font-weight:900">О</span>
+          <span class="l" id="L3" style="background:#d7322a;color:#fff;font-family:Montserrat;font-weight:900">Д</span>
+          <span class="l" id="L4" style="background:#f2c230;color:#151515;font-family:'EB Garamond';font-weight:700">Н</span>
+          <span class="l" id="L5" style="background:#2c5aa0;color:#fff;font-family:Oswald">О</span>
+          <span class="l" id="L6" style="background:#fff7e8;color:#d7322a;font-family:Montserrat;font-weight:900">Ї</span>
+        </div>
+        <div class="letters" id="row2" style="top:500px;left:150px">
+          <span class="l" id="P1" style="background:#fff7e8;color:#151515;font-family:Montserrat;font-weight:900;font-size:76px">П</span>
+          <span class="l" id="P2" style="background:#151515;color:#f2c230;font-family:Oswald;font-size:76px">Р</span>
+          <span class="l" id="P3" style="background:#d7322a;color:#fff;font-family:'Playfair Display';font-weight:900;font-size:76px">О</span>
+          <span class="l" id="P4" style="background:#fff7e8;color:#2c5aa0;font-family:'EB Garamond';font-weight:700;font-size:76px">Г</span>
+          <span class="l" id="P5" style="background:#f2c230;color:#151515;font-family:Oswald;font-size:76px">Р</span>
+          <span class="l" id="P6" style="background:#151515;color:#fff;font-family:Montserrat;font-weight:900;font-size:76px">А</span>
+          <span class="l" id="P7" style="background:#fff7e8;color:#d7322a;font-family:Oswald;font-size:76px">М</span>
+          <span class="l" id="P8" style="background:#2c5aa0;color:#fff;font-family:'Playfair Display';font-weight:900;font-size:76px">И</span>
+        </div>
+      </div>
+
+      <div id="stickwrap"><video id="stick" class="clip" data-start="0" data-duration="8.4" data-track-index="2" src="assets/sticker.webm" muted playsinline data-layout-allow-occlusion></video></div>
+
+      <!-- 3: записки поверх -->
+      <div id="b3" class="clip layer front" data-start="4.80" data-duration="2.04" data-track-index="3">
+        <div class="strip torn" id="b3a" style="left:70px;top:1040px;font-size:86px;background:#f2c230;color:#151515">ШВИДКА СКЛЕЙКА</div>
+        <div class="strip torn" id="b3b" style="left:200px;top:1180px;font-size:86px;background:#fff7e8;color:#151515">БІЛЬШІ ТИТРИ</div>
+        <div class="tape" id="b3t" style="left:60px;top:1022px"></div>
+      </div>
+
+      <!-- 4: велика червона смуга + вирізана стрілка -->
+      <div id="b4" class="clip layer front" data-start="6.84" data-duration="1.56" data-track-index="3">
+        <div class="strip torn" id="b4a" style="left:60px;top:1050px;font-size:120px;background:#d7322a;color:#fff6e6">ОДНЕ РЕЧЕННЯ</div>
+        <div class="arrow" id="b4r" style="left:730px;top:900px"></div>
+        <div class="tape" id="b4t" style="left:820px;top:1036px"></div>
+      </div>
+
+      <audio id="voice" class="clip" data-start="0" data-duration="8.4" data-track-index="9" src="assets/voice.m4a" data-volume="1"></audio>
+    </div>
+    <script>
+      const tl = gsap.timeline({ paused: true });
+      const STEP = 1 / 12;   // stop-motion: рух лише кожну 1/12 секунди
+      // «ляп»: шматок з'являється трохи більшим і з поворотом і за 2 кроки лягає на місце
+      const slap = (sel, t, rot) => {
+        tl.set(sel, { opacity: 0 }, 0);
+        tl.set(sel, { opacity: 1, scale: 1.14, rotation: rot * 2.2 }, t);
+        tl.set(sel, { scale: 1.04, rotation: rot * 1.3 }, t + STEP);
+        tl.set(sel, { scale: 1, rotation: rot }, t + 2 * STEP);
+      };
+      slap("#b1a", 0.42, -3); slap("#b1b", 0.92, 2); slap("#b1t", 1.0, 8);
+      slap("#b2a", 2.40, -2);
+      ["#L1", "#L2", "#L3", "#L4", "#L5", "#L6"].forEach((s, i) => slap(s, 3.36 + i * STEP, [-6, 4, -3, 7, -5, 3][i]));
+      ["#P1", "#P2", "#P3", "#P4", "#P5", "#P6", "#P7", "#P8"].forEach((s, i) => slap(s, 3.70 + i * STEP, [4, -5, 3, -6, 5, -3, 6, -4][i]));
+      slap("#b3a", 4.86, -2); slap("#b3t", 4.94, -10); slap("#b3b", 5.96, 3);
+      slap("#b4a", 7.64, -2); slap("#b4r", 7.88, 205); slap("#b4t", 7.96, 6);
+      // наліпка тремтить покадрово, як фото, яке щоразу трохи інакше кладуть під камеру
+      let seed = 7;
+      const rnd = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647 - 0.5; };
+      for (let t = 0; t < 8.4; t += STEP * 2) {
+        tl.set("#stickwrap", { rotation: -1.5 + rnd() * 0.8, x: rnd() * 5, y: rnd() * 5, transformOrigin: "50% 60%" }, t);
+      }
+      window.__timelines = window.__timelines || {};
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>

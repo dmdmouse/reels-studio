@@ -1,0 +1,94 @@
+<!doctype html>
+<!-- Terminal / HUD: притемнена холодна картинка, вікно термінала над головою, де твої слова набираються як команди,
+     рамки захоплення навколо обличчя, смуги виконання. Один колір сигналу — зелений, моноширинний шрифт. -->
+<html lang="uk" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      :root { --g: #39ff8f; --dim: #8fb8a0; }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1920px; overflow: hidden; background: #000; }
+      #root { position: relative; width: 1080px; height: 1920px; font-family: "JetBrains Mono", monospace; color: #e9fff1; }
+      .full { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; object-fit: cover; }
+      #plate { z-index: 1; }
+      .layer { position: absolute; inset: 0; z-index: 3; }
+      .win { position: absolute; left: 56px; top: 176px; width: 968px; height: 500px; background: #050a07d9; border: 2px solid #39ff8f55; border-radius: 22px;
+             box-shadow: 0 30px 80px #000a; overflow: hidden; }
+      .bar { height: 62px; border-bottom: 2px solid #39ff8f33; display: flex; align-items: center; padding: 0 26px; gap: 14px; font-size: 26px; color: var(--dim); }
+      .dot { width: 18px; height: 18px; border-radius: 50%; background: #39ff8f55; }
+      .ln { position: absolute; left: 34px; font-size: 40px; line-height: 1.25; white-space: nowrap; }
+      .ln .p { color: var(--g); }
+      .c { opacity: 0; }
+      .prog { position: absolute; left: 34px; height: 26px; width: 520px; border: 2px solid #39ff8f88; }
+      .fill { position: absolute; left: 2px; top: 2px; bottom: 2px; width: 512px; background: var(--g); transform-origin: left; }
+      .pct { position: absolute; left: 580px; font-size: 32px; color: var(--g); }
+      .br { position: absolute; width: 70px; height: 70px; border-color: var(--g); border-style: solid; border-width: 0; }
+      .lock { position: absolute; font-size: 26px; color: var(--g); letter-spacing: 0.08em; }
+      .big { position: absolute; left: 56px; top: 1100px; font-size: 104px; font-weight: 800; color: var(--g); letter-spacing: -0.02em; line-height: 1;
+             text-shadow: 0 0 1px #000, 0 6px 30px #000; }
+      .cursor { display: inline-block; width: 22px; height: 44px; background: var(--g); vertical-align: -6px; margin-left: 6px; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="8.4" data-width="1080" data-height="1920">
+      <video id="plate" class="clip full" data-start="0" data-duration="8.4" data-track-index="0" src="assets/plate.mp4" muted playsinline></video>
+
+      <div id="term" class="clip layer" data-start="0" data-duration="8.4" data-track-index="1">
+        <div class="win" id="win">
+          <div class="bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span style="margin-left:18px">claude — reels</span></div>
+          <div class="ln" id="l1" style="top:96px"><span class="p">› </span><span class="tx">описую це словами</span></div>
+          <div class="ln" id="l2" style="top:166px"><span class="p">› </span><span class="tx">жодну програму для монтажу</span></div>
+          <div class="ln" id="l3" style="top:250px"><span class="p">› </span><span class="tx">швидка склейка</span></div>
+          <div class="prog" id="pg3" style="top:318px"><div class="fill" id="f3"></div></div><div class="pct" id="p3" style="top:310px">0%</div>
+          <div class="ln" id="l4" style="top:368px"><span class="p">› </span><span class="tx">більші титри</span></div>
+          <div class="prog" id="pg4" style="top:436px"><div class="fill" id="f4"></div></div><div class="pct" id="p4" style="top:428px">0%</div>
+        </div>
+      </div>
+
+      <!-- рамки захоплення навколо обличчя (план на дивані) -->
+      <div id="lockon" class="clip layer" data-start="2.36" data-duration="6.04" data-track-index="2">
+        <div class="br" id="k1" style="left:370px;top:740px;border-top-width:6px;border-left-width:6px"></div>
+        <div class="br" id="k2" style="left:640px;top:740px;border-top-width:6px;border-right-width:6px"></div>
+        <div class="br" id="k3" style="left:370px;top:1010px;border-bottom-width:6px;border-left-width:6px"></div>
+        <div class="br" id="k4" style="left:640px;top:1010px;border-bottom-width:6px;border-right-width:6px"></div>
+        <div class="lock" id="lk" style="left:370px;top:1094px">● REC</div>
+      </div>
+
+      <div id="fin" class="clip layer" data-start="6.86" data-duration="1.54" data-track-index="3">
+        <div class="big" id="bigt">= одне речення<span class="cursor" id="cur"></span></div>
+      </div>
+      <audio id="voice" class="clip" data-start="0" data-duration="8.4" data-track-index="9" src="assets/voice.m4a" data-volume="1"></audio>
+    </div>
+    <script>
+      const tl = gsap.timeline({ paused: true });
+      tl.fromTo("#win", { opacity: 0, scale: 0.96 }, { opacity: 1, scale: 1, duration: 0.35, ease: "expo.out" }, 0.05);
+      // команди набираються по літері
+      const type = (lineId, t, cps) => {
+        const tx = document.querySelector("#" + lineId + " .tx");
+        const text = tx.textContent; tx.textContent = "";
+        [...text].forEach((ch, i) => { const s = document.createElement("span"); s.className = "c"; s.textContent = ch; tx.appendChild(s); tl.set(s, { opacity: 1 }, t + i / cps); });
+        tl.fromTo("#" + lineId + " .p", { opacity: 0 }, { opacity: 1, duration: 0.05 }, t - 0.05);
+      };
+      type("l1", 0.40, 30); type("l2", 3.30, 34); type("l3", 4.86, 28); type("l4", 5.96, 30);
+      // виконання: смуга й відсотки — функція часу
+      const run = (n, t) => {
+        tl.fromTo("#pg" + n, { opacity: 0 }, { opacity: 1, duration: 0.05 }, t);
+        tl.fromTo("#f" + n, { scaleX: 0 }, { scaleX: 1, duration: 0.6, ease: "power2.inOut" }, t);
+        const o = { v: 0 };
+        tl.to(o, { v: 100, duration: 0.6, ease: "power2.inOut", onUpdate: () => { document.getElementById("p" + n).textContent = Math.round(o.v) + "%"; } }, t);
+        tl.fromTo("#p" + n, { opacity: 0 }, { opacity: 1, duration: 0.05 }, t);
+      };
+      run(3, 5.36); run(4, 6.40);
+      // рамки «захоплюють» обличчя з розльоту
+      [["#k1", -60, -60], ["#k2", 60, -60], ["#k3", -60, 60], ["#k4", 60, 60]].forEach(([s, x, y]) =>
+        tl.fromTo(s, { x, y, opacity: 0 }, { x: 0, y: 0, opacity: 1, duration: 0.4, ease: "expo.out" }, 2.40));
+      tl.fromTo("#lk", { opacity: 0 }, { opacity: 1, duration: 0.1 }, 2.80);
+      tl.fromTo("#bigt", { opacity: 0, filter: "blur(10px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.2, ease: "power3.out" }, 7.62);
+      for (let t = 7.62; t < 8.4; t += 0.5) tl.set("#cur", { opacity: 0 }, t + 0.25).set("#cur", { opacity: 1 }, t + 0.5);
+      window.__timelines = window.__timelines || {};
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>

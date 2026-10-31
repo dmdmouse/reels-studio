@@ -1,0 +1,101 @@
+<!doctype html>
+<!-- Logo reveal: помаранчевий мʼяч падає й відскакує, як у класичній вправі аніматора, і малює за собою траєкторію
+     з ручками кривих, ніби в редакторі анімації. Потім падає точно в «і» слова «студія» й стає його крапкою;
+     назва ляскає на місце з ударом, під нею друкується адреса. Майже чорне тло, один помаранчевий колір. Музики немає. -->
+<html lang="uk" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      :root { --bg: #0f0f11; --or: #f36b35; --ink: #f4f1ea; }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1920px; overflow: hidden; background: var(--bg); }
+      #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; background: var(--bg); font-family: "Inter", sans-serif; }
+      .vig { position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 45%, #0000 40%, #000c 100%); }
+      .ruler { position: absolute; left: 90px; top: 1040px; width: 900px; height: 2px; background: #f4f1ea55; transform-origin: left; }
+      .tick { position: absolute; top: -10px; width: 2px; height: 22px; background: #f4f1ea55; }
+      .word { position: absolute; left: 0; width: 1080px; top: 870px; text-align: center; font-weight: 900; font-size: 150px; letter-spacing: -0.045em; color: var(--ink); line-height: 1; }
+      .word .i { position: relative; display: inline-block; }
+      .url { position: absolute; left: 0; width: 1080px; top: 1080px; text-align: center; font-family: "JetBrains Mono", monospace; font-size: 38px; color: #f4f1eaaa; letter-spacing: 0.06em; }
+      .url .c { opacity: 0; }
+      #ball { position: absolute; left: 0; top: 0; width: 60px; height: 60px; margin: -30px 0 0 -30px; border-radius: 50%; background: var(--or); box-shadow: 0 0 40px #f36b3588; }
+      .key { position: absolute; width: 22px; height: 22px; margin: -11px 0 0 -11px; background: var(--or); transform: rotate(45deg); }
+      svg { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; overflow: visible; }
+      .ring { position: absolute; width: 60px; height: 60px; margin: -30px 0 0 -30px; border-radius: 50%; border: 4px solid var(--or); }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="8" data-width="1080" data-height="1920">
+      <div id="stage" class="clip" data-start="0" data-duration="8" data-track-index="0" style="position:absolute;inset:0">
+        <div class="vig"></div>
+        <div class="ruler" id="rul">
+          <div class="tick" style="left:0"></div><div class="tick" style="left:150px"></div><div class="tick" style="left:300px"></div>
+          <div class="tick" style="left:450px"></div><div class="tick" style="left:600px"></div><div class="tick" style="left:750px"></div><div class="tick" style="left:898px"></div>
+        </div>
+        <svg>
+          <path id="path" d="M 160 360 C 300 360, 380 600, 420 1010 C 470 700, 560 620, 640 620 C 700 620, 730 760, 742 902" fill="none" stroke="#f36b35" stroke-width="5" stroke-linecap="round" stroke-dasharray="1 0"/>
+          <g id="handles" opacity="0">
+            <line x1="560" y1="620" x2="720" y2="620" stroke="#f36b35aa" stroke-width="3"/>
+            <rect x="549" y="609" width="22" height="22" fill="#0f0f11" stroke="#f36b35" stroke-width="3" transform="rotate(45 560 620)"/>
+            <rect x="709" y="609" width="22" height="22" fill="#0f0f11" stroke="#f36b35" stroke-width="3" transform="rotate(45 720 620)"/>
+          </g>
+        </svg>
+        <div class="key" id="k1" style="left:420px;top:1010px"></div>
+        <div class="word" id="word">reels студ<span class="i" id="ii">ı</span>я</div>
+        <div class="url" id="url">yoursite.com</div>
+        <div class="ring" id="r1"></div><div class="ring" id="r2"></div>
+        <div id="ball"></div>
+      </div>
+      <audio id="a1" class="clip" data-start="0.30" data-duration="1.0" data-track-index="5" src="assets/sfx/whoosh.wav" data-volume="0.2"></audio>
+      <audio id="a2" class="clip" data-start="1.20" data-duration="0.4" data-track-index="6" src="assets/sfx/click.wav" data-volume="0.35"></audio>
+      <audio id="a3" class="clip" data-start="1.95" data-duration="0.4" data-track-index="6" src="assets/sfx/pop.wav" data-volume="0.3"></audio>
+      <audio id="a4" class="clip" data-start="2.90" data-duration="2.0" data-track-index="7" src="assets/sfx/sub.wav" data-volume="0.4"></audio>
+      <audio id="a5" class="clip" data-start="2.90" data-duration="1.4" data-track-index="8" src="assets/sfx/impact.wav" data-volume="0.35"></audio>
+      <audio id="a6" class="clip" data-start="4.60" data-duration="1.4" data-track-index="9" src="assets/sfx/typing.wav" data-volume="0.16"></audio>
+    </div>
+    <script>
+      const tl = gsap.timeline({ paused: true });
+      const path = document.getElementById("path"), L = path.getTotalLength();
+      path.style.strokeDasharray = L + " " + L;
+      tl.fromTo("#rul", { scaleX: 0, opacity: 0 }, { scaleX: 1, opacity: 1, duration: 0.6, ease: "power3.inOut" }, 0.0);
+      // мʼяч іде по траєкторії (позиція — точка кривої в момент часу), крива малюється за ним
+      const pos = { p: 0 };
+      // крапка над «і»: рахуємо з реального шрифту в момент кадру (шрифт уже завантажений, коли рендер знімає кадр)
+      const DOT = 0.21;   // центр крапки над верхом рядка, у частках розміру шрифту
+      const dotXY = () => { const r = document.getElementById("ii").getBoundingClientRect(), o = document.getElementById("root").getBoundingClientRect();
+        return [r.left + r.width / 2 - o.left, r.top - o.top + 150 * DOT * (r.height / 150)]; };
+      const place = () => {
+        const pt = path.getPointAtLength(pos.p * L);
+        let x = pt.x, y = pt.y;
+        if (pos.p > 0.75) { const [dx, dy] = dotXY(), q = (pos.p - 0.75) / 0.25; x += (dx - pt.x) * q; y += (dy - pt.y) * q; }   // останній відрізок веде точно в крапку
+        gsap.set("#ball", { x, y });
+      };
+      tl.fromTo(pos, { p: 0 }, { p: 0.43, duration: 0.9, ease: "power2.in", onUpdate: place }, 0.3);      // падіння до лінійки
+      tl.to(pos, { p: 0.75, duration: 0.6, ease: "power2.out", onUpdate: place }, 1.2);                    // відскік до верхівки
+      tl.to(pos, { p: 1, duration: 0.55, ease: "power2.in", onUpdate: place }, 2.35);                      // падіння в «і»
+      tl.set(pos, { p: 0, onUpdate: place }, 0);
+      const draw = { d: 0 };
+      tl.fromTo(draw, { d: 0 }, { d: 1, duration: 2.6, ease: "none", onUpdate: () => { path.style.strokeDashoffset = L * (1 - draw.d); } }, 0.3);
+      // сплющення при ударі об лінійку
+      tl.to("#ball", { scaleX: 1.45, scaleY: 0.6, duration: 0.06 }, 1.2).to("#ball", { scaleX: 1, scaleY: 1, duration: 0.18, ease: "back.out(3)" }, 1.26);
+      tl.fromTo("#k1", { scale: 0 }, { scale: 1, duration: 0.25, ease: "back.out(3)" }, 1.22);
+      tl.to("#handles", { opacity: 1, duration: 0.15 }, 1.95);
+      // назва ляскає, мʼяч стає крапкою над «і»
+      tl.fromTo("#word", { opacity: 0, scale: 1.25 }, { opacity: 1, scale: 1, duration: 0.18, ease: "expo.out" }, 2.9);
+      tl.to(["#path", "#handles", "#k1", "#rul"], { opacity: 0, duration: 0.5, ease: "power2.out" }, 3.0);
+      tl.to("#ball", { scale: 0.42, duration: 0.15, ease: "power2.out" }, 2.9);
+      const stick = { v: 0 };   // поки назва «сідає», крапка лишається над «і»
+      tl.to(stick, { v: 1, duration: 5.1, ease: "none", onUpdate: () => { const [x, y] = dotXY(); gsap.set("#ball", { x, y }); } }, 2.9);
+      [["#r1", 0], ["#r2", 0.12]].forEach(([s, d]) => {
+        tl.fromTo(s, { scale: 0.3, opacity: 0 }, { scale: 4, opacity: 0, duration: 0.7, ease: "power2.out",
+          onUpdate: function () { const [x, y] = dotXY(); gsap.set(s, { x, y, opacity: 1 - this.progress() }); } }, 2.9 + d);
+      });
+      // адреса друкується
+      const u = document.getElementById("url"); const text = u.textContent; u.textContent = "";
+      [...text].forEach((ch, i) => { const s = document.createElement("span"); s.className = "c"; s.textContent = ch; u.appendChild(s); tl.set(s, { opacity: 1 }, 4.6 + i * 0.04); });
+      window.__timelines = window.__timelines || {};
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>

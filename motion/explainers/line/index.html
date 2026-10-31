@@ -1,0 +1,65 @@
+<!doctype html>
+<!-- Single line: одна чорнильна лінія малює себе й ніде не відривається — камера, потім бульбашка мови, потім ножиці,
+     потім телефон із кнопкою «грати». Під кожним малюнком — одне слово. Біле тло, одна лінія, один помаранчевий акцент.
+     Камера «йде за пером»: сцена плавно зсувається вліво, як аркуш. Звук — тихий свіш на кожному малюнку. Музики немає. -->
+<html lang="uk" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1920px; overflow: hidden; background: #fbfaf7; }
+      #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; background: #fbfaf7; font-family: "Playfair Display", serif; color: #161616; }
+      #sheet { position: absolute; left: 0; top: 0; width: 4320px; height: 1920px; }
+      .ink { fill: none; stroke: #161616; stroke-width: 9; stroke-linecap: round; stroke-linejoin: round; }
+      svg { position: absolute; left: 0; top: 0; width: 4320px; height: 1920px; overflow: visible; }
+      .lab { position: absolute; width: 1080px; text-align: center; top: 1090px; font-size: 104px; font-style: italic; letter-spacing: -0.01em; }
+      .kick { position: absolute; left: 0; width: 1080px; text-align: center; top: 250px; font-family: "Inter", sans-serif; font-weight: 700; font-size: 32px; letter-spacing: 0.24em; color: #f36b35; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="10" data-width="1080" data-height="1920">
+      <div id="all" class="clip" data-start="0" data-duration="10" data-track-index="0" style="position:absolute;inset:0">
+        <div class="kick" id="kick">ЯК Я МОНТУЮ З CLAUDE</div>
+        <div id="sheet">
+          <svg>
+            <!-- лінія не відривається між малюнками: кожна частина починається там, де закінчилась попередня -->
+            <path class="ink" id="i1" d="M -40 960 L 290 960 L 290 740 L 420 740 L 450 690 L 630 690 L 660 740 L 790 740 L 790 980 L 290 980 L 290 960
+              M 460 860 A 80 80 0 1 0 620 860 A 80 80 0 1 0 460 860 M 790 960 C 900 960, 1050 960, 1180 960"/>
+            <path class="ink" id="i2" d="M 1180 960 L 1340 960 C 1300 880, 1300 760, 1420 720 C 1540 680, 1780 680, 1880 740 C 1980 800, 1960 920, 1860 950
+              C 1760 980, 1560 985, 1480 975 L 1400 1040 L 1420 965 C 1380 960, 1360 960, 1340 960 M 1860 950 C 2000 960, 2200 960, 2380 960"/>
+            <path class="ink" id="i3" d="M 2380 960 C 2440 960, 2480 1000, 2520 1050 A 50 50 0 1 1 2620 1050 A 50 50 0 1 1 2520 1050 L 2605 1015 L 2856 786 L 2700 930
+              L 2690 1090 A 50 50 0 1 1 2790 1090 A 50 50 0 1 1 2690 1090 L 2700 930 L 2652 738 C 2760 700, 3200 960, 3460 960"/>
+            <path class="ink" id="i4" d="M 3460 960 L 3620 960 L 3620 620 C 3620 590, 3640 570, 3670 570 L 3890 570 C 3920 570, 3940 590, 3940 620 L 3940 1000
+              C 3940 1030, 3920 1050, 3890 1050 L 3670 1050 C 3640 1050, 3620 1030, 3620 1000 L 3620 960 M 3740 730 L 3740 890 L 3860 810 Z"/>
+          </svg>
+          <div class="lab" id="l1" style="left:0">Знімаєш.</div>
+          <div class="lab" id="l2" style="left:1080px">Кажеш одне речення.</div>
+          <div class="lab" id="l3" style="left:2160px">Claude ріже.</div>
+          <div class="lab" id="l4" style="left:3240px;color:#f36b35">Рілс готовий.</div>
+        </div>
+      </div>
+      <audio id="a1" class="clip" data-start="0.30" data-duration="0.6" data-track-index="5" src="assets/sfx/swish.wav" data-volume="0.2"></audio>
+      <audio id="a2" class="clip" data-start="2.70" data-duration="0.6" data-track-index="5" src="assets/sfx/swish.wav" data-volume="0.2"></audio>
+      <audio id="a3" class="clip" data-start="5.10" data-duration="0.6" data-track-index="5" src="assets/sfx/swish.wav" data-volume="0.2"></audio>
+      <audio id="a4" class="clip" data-start="7.40" data-duration="0.8" data-track-index="6" src="assets/sfx/ding.wav" data-volume="0.22"></audio>
+    </div>
+    <script>
+      const tl = gsap.timeline({ paused: true });
+      // кожна частина лінії малюється у своєму вікні часу; аркуш переїжджає між ними
+      [["i1", 0.2, 1.6], ["i2", 2.5, 1.6], ["i3", 4.9, 1.5], ["i4", 7.2, 1.2]].forEach(([id, t, d]) => {
+        const p = document.getElementById(id), L = p.getTotalLength();
+        p.style.strokeDasharray = L + " " + L;
+        tl.fromTo(p, { strokeDashoffset: L }, { strokeDashoffset: 0, duration: d, ease: "power1.inOut" }, t);
+      });
+      // аркуш їде вліво, коли перо переходить до наступного малюнка
+      [[2.2, -1080], [4.6, -2160], [6.9, -3240]].forEach(([t, x]) => tl.to("#sheet", { x, duration: 0.8, ease: "power2.inOut" }, t));
+      [["#l1", 1.6], ["#l2", 4.0], ["#l3", 6.3], ["#l4", 8.5]].forEach(([s, t]) =>
+        tl.fromTo(s, { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.25, ease: "power3.out" }, t));
+      tl.fromTo("#kick", { opacity: 0 }, { opacity: 1, duration: 0.3 }, 0.2);
+      window.__timelines = window.__timelines || {};
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>

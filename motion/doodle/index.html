@@ -1,0 +1,91 @@
+<!doctype html>
+<!-- Doodle / від руки: слова пишуться маркером (Caveat), стрілки, рамка, хрест і галочки малюються лінією просто на відео.
+     Усе «кипить» — лінії ледь тремтять кожні 2 кадри, як мультфільм, намальований вручну. Колір маркера — жовтий. -->
+<html lang="uk" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      @font-face { font-family: "Caveat"; font-weight: 700; src: url("assets/caveat-cyrillic.woff2") format("woff2");
+                   unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; }
+      @font-face { font-family: "Caveat"; font-weight: 700; src: url("assets/caveat-latin.woff2") format("woff2"); unicode-range: U+0000-00FF, U+2000-206F; }
+      :root { --mk: #ffd84d; }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1920px; overflow: hidden; background: #000; }
+      #root { position: relative; width: 1080px; height: 1920px; font-family: "Caveat", cursive; color: #fff; }
+      .full { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; object-fit: cover; }
+      #plate { z-index: 1; }
+      .layer { position: absolute; inset: 0; z-index: 3; }
+      .hand { position: absolute; font-weight: 700; line-height: 0.95; text-shadow: 0 4px 18px rgba(0,0,0,.55); white-space: nowrap; }
+      .hand .c { opacity: 0; }
+      svg { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; overflow: visible; }
+      path { fill: none; stroke: var(--mk); stroke-width: 12; stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 3px 6px rgba(0,0,0,.45)); }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="8.4" data-width="1080" data-height="1920">
+      <video id="plate" class="clip full" data-start="0" data-duration="8.4" data-track-index="0" src="assets/plate.mp4" muted playsinline></video>
+
+      <div id="b1" class="clip layer" data-start="0.3" data-duration="1.04" data-track-index="1">
+        <div class="hand boil" id="h1" style="left:90px;top:220px;font-size:150px">описую<br/>&nbsp;&nbsp;словами!</div>
+        <svg class="boil"><path id="ar1" d="M 760 400 C 860 470, 820 560, 640 640 M 640 640 L 700 600 M 640 640 L 690 690"/></svg>
+      </div>
+
+      <div id="b2" class="clip layer" data-start="2.36" data-duration="2.44" data-track-index="1">
+        <div class="hand boil" id="h2" style="left:90px;top:190px;font-size:96px">не потрібно...</div>
+        <div class="hand boil" id="h3" style="left:150px;top:360px;font-size:118px">програму<br/>для монтажу</div>
+        <svg class="boil">
+          <path id="bx" d="M 120 352 L 860 340 L 870 640 L 128 652 Z"/>
+          <path id="x1" d="M 150 380 C 400 470, 640 560, 860 640"/>
+          <path id="x2" d="M 850 360 C 600 450, 380 560, 140 650"/>
+        </svg>
+      </div>
+
+      <div id="b3" class="clip layer" data-start="4.82" data-duration="2.02" data-track-index="1">
+        <svg class="boil"><path id="ck1" d="M 100 300 L 140 350 L 220 230"/><path id="ck2" d="M 100 490 L 140 540 L 220 420"/></svg>
+        <div class="hand boil" id="h4" style="left:250px;top:220px;font-size:118px">швидка склейка</div>
+        <div class="hand boil" id="h5" style="left:250px;top:410px;font-size:118px">більші титри</div>
+      </div>
+
+      <div id="b4" class="clip layer" data-start="6.86" data-duration="1.54" data-track-index="1">
+        <div class="hand boil" id="h6" style="left:120px;top:250px;font-size:168px">= одне речення</div>
+        <svg class="boil">
+          <path id="ul" d="M 130 470 C 380 440, 660 500, 960 450"/>
+          <path id="ci" d="M 520 300 C 420 210, 200 240, 150 330 C 110 420, 300 470, 520 450 C 760 430, 1010 420, 990 320 C 970 230, 760 200, 560 250"/>
+        </svg>
+      </div>
+      <audio id="voice" class="clip" data-start="0" data-duration="8.4" data-track-index="9" src="assets/voice.m4a" data-volume="1"></audio>
+    </div>
+    <script>
+      const tl = gsap.timeline({ paused: true });
+      // маркер пише слово по літері
+      const write = (id, t, cps) => {
+        const el = document.getElementById(id);
+        const walk = (n) => { for (const c of [...n.childNodes]) {
+          if (c.nodeType === 3) { const f = document.createDocumentFragment();
+            for (const ch of c.textContent) { const s = document.createElement("span"); s.className = "c"; s.textContent = ch; f.appendChild(s); }
+            n.replaceChild(f, c); } else if (c.nodeName !== "BR") walk(c); } };
+        walk(el);
+        el.querySelectorAll(".c").forEach((s, i) => tl.set(s, { opacity: 1 }, t + i / cps));
+      };
+      // лінія малюється від початку до кінця
+      const draw = (id, t, dur) => {
+        const p = document.getElementById(id), L = p.getTotalLength();
+        p.style.strokeDasharray = L;
+        tl.fromTo(p, { strokeDashoffset: L }, { strokeDashoffset: 0, duration: dur, ease: "power2.inOut" }, t);
+      };
+      write("h1", 0.40, 28); draw("ar1", 0.92, 0.35);
+      write("h2", 2.40, 22); write("h3", 3.36, 30); draw("bx", 3.70, 0.4); draw("x1", 4.10, 0.18); draw("x2", 4.28, 0.18);
+      write("h4", 4.86, 34); draw("ck1", 5.28, 0.22); write("h5", 5.96, 34); draw("ck2", 6.36, 0.22);
+      write("h6", 7.40, 34); draw("ul", 7.88, 0.28); draw("ci", 7.96, 0.38);
+      // «кипіння» ліній: кожні 2 кадри — новий нахил і зсув на 1–2 px (сід фіксований, кадри однакові при кожному рендері)
+      let seed = 11;
+      const rnd = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647 - 0.5; };
+      const boil = [...document.querySelectorAll(".boil")];
+      for (let t = 0; t < 8.4; t += 2 / 30) boil.forEach((el) => tl.set(el, { x: rnd() * 3, y: rnd() * 3, rotation: rnd() * 0.5 }, t));
+      window.__timelines = window.__timelines || {};
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>

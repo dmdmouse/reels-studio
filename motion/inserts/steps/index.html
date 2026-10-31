@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="uk" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1920px; overflow: hidden; background: #000; }
+      #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; background: #000; font-family: "Inter", sans-serif; color: #141414; }
+      #plate { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; object-fit: cover; }
+      .chip { position: absolute; left: 60px; width: 960px; height: 124px; background: #fff; border-radius: 30px; display: flex; align-items: center; gap: 26px; padding: 0 30px; box-shadow: 0 14px 40px rgba(0,0,0,.28); }
+      .chip b { flex: none; width: 70px; height: 70px; border-radius: 35px; background: #f36b35; color: #fff; font-size: 40px; font-weight: 800; display: flex; align-items: center; justify-content: center; }
+      .chip span { font-weight: 800; font-size: 50px; line-height: 1.05; letter-spacing: -0.025em; }
+    </style>
+  </head>
+  <body>
+    <!-- Людина лишається в кадрі, поруч зʼявляються кроки. Субтитри на цих секундах можна не вимикати: кроки вгорі, субтитри внизу. -->
+    <div id="root" data-composition-id="main" data-start="0" data-duration="8.2" data-width="1080" data-height="1920">
+      <video id="plate" class="clip" data-start="0" data-duration="8.2" data-track-index="0" muted playsinline src="assets/plate.mp4"></video>
+      <div id="all" class="clip" data-start="0" data-duration="8.2" data-track-index="1" style="position:absolute;inset:0">
+        <!-- ЗАМІНИ: 2–3 кроки словами людини, секунди появи нижче. Обличчя має лишатись нижче 620 px; вище — зміни top -->
+        <div class="chip" id="s1" style="top:170px"><b>1</b><span>розкадрований план</span></div>
+        <div class="chip" id="s2" style="top:308px"><b>2</b><span>бачу хід його думок</span></div>
+        <div class="chip" id="s3" style="top:446px"><b>3</b><span>просто описую словами</span></div>
+      </div>
+      <audio id="a1" class="clip" data-start="0.84" data-duration="0.2" data-track-index="5" src="assets/sfx/pop.wav" data-volume="0.3"></audio>
+      <audio id="a2" class="clip" data-start="2.10" data-duration="0.2" data-track-index="5" src="assets/sfx/pop.wav" data-volume="0.3"></audio>
+      <audio id="a3" class="clip" data-start="7.06" data-duration="0.2" data-track-index="5" src="assets/sfx/pop.wav" data-volume="0.3"></audio>
+    </div>
+    <script>
+      const tl = gsap.timeline({ paused: true });
+      [["#s1", 0.84], ["#s2", 2.10], ["#s3", 7.06]].forEach(([s, t]) =>
+        tl.fromTo(s, { x: -70, opacity: 0, scale: 0.94 }, { x: 0, opacity: 1, scale: 1, duration: 0.28, ease: "back.out(1.7)" }, t));
+      window.__timelines = window.__timelines || {};
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>

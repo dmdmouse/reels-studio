@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="uk" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1920px; overflow: hidden; background: #f4f3f0; }
+      #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; background: #f4f3f0; }
+      .box { position: absolute; left: 100px; width: 880px; overflow: hidden; border-radius: 30px; background: #111; box-shadow: 0 18px 50px rgba(20,20,20,.16); }
+      #authorBox { top: 170px; height: 430px; }
+      #author { position: absolute; left: -205px; top: -590px; width: 1080px; height: 1920px; }
+      #screenBox { top: 620px; height: 684px; }
+      #zoom { position: absolute; left: 0; top: 0; width: 880px; height: 684px; transform-origin: 0 0; }
+      #screen { position: absolute; left: 0; top: 0; width: 880px; height: 684px; }
+    </style>
+  </head>
+  <body>
+    <!-- Запис екрана + автор: автор зверху, екран по центру, знизу вільно під субтитри (reels.py captions).
+         Без автора: видали #authorBox, у #screenBox постав top: 300px. -->
+    <div id="root" data-composition-id="main" data-start="0" data-duration="9.8" data-width="1080" data-height="1920">
+      <div id="authorBox" class="box">
+        <!-- left/top: куди зсунути відео автора, щоб обличчя було по центру коробки -->
+        <video id="author" class="clip" data-start="0" data-duration="9.8" data-track-index="0" muted playsinline src="assets/author.mp4"></video>
+      </div>
+      <div id="screenBox" class="box">
+        <div id="zoom">
+          <video id="screen" class="clip" data-start="0" data-duration="9.8" data-track-index="1" muted playsinline src="assets/screen.mp4"></video>
+        </div>
+      </div>
+      <audio id="voice" class="clip" data-start="0" data-duration="9.8" data-track-index="4" src="assets/voice.m4a"></audio>
+      <audio id="a1" class="clip" data-start="1.95" data-duration="0.3" data-track-index="5" src="assets/sfx/swish.wav" data-volume="0.22"></audio>
+      <audio id="a2" class="clip" data-start="8.50" data-duration="0.3" data-track-index="5" src="assets/sfx/swish.wav" data-volume="0.22"></audio>
+    </div>
+    <script>
+      const tl = gsap.timeline({ paused: true });
+      // наїзд: fx, fy — точка екрана від 0 до 1, s — масштаб, t — секунда слова, d — скільки їхати
+      const W = 880, H = 684;
+      const to = (fx, fy, s, t, d = 0.5) => tl.to("#zoom", { scale: s, x: W / 2 - fx * W * s, y: H / 2 - fy * H * s, duration: d, ease: "power2.inOut" }, t);
+      tl.set("#zoom", { scale: 1, x: 0, y: 0 }, 0);
+      to(0.31, 0.62, 1.9, 1.95);     // ЗАМІНИ: на словах «розкадрований план» — на список
+      to(0.5, 0.5, 1, 6.2, 0.6);     // назад, щоб зловити загальний план
+      to(0.29, 0.86, 1.8, 8.5);      // ЗАМІНИ: на словах «описую словами» — на поле вводу
+      window.__timelines = window.__timelines || {};
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>

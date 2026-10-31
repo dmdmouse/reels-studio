@@ -1,0 +1,89 @@
+<!doctype html>
+<!-- Pop art / комікс: насичена картинка, растрові точки на фоні (людина поверх них — чиста), бульбашки з товстим чорним контуром,
+     вибух-зірка, жорсткі зсунуті тіні. Рух — пружинний «поп» з перельотом, як у мультфільмі. -->
+<html lang="uk" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      :root { --yellow: #ffe600; --red: #e8202a; --cyan: #00aeef; --ink: #111; }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1920px; overflow: hidden; background: #000; }
+      #root { position: relative; width: 1080px; height: 1920px; font-family: "Montserrat", sans-serif; }
+      .full { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; object-fit: cover; }
+      #plate { z-index: 1; } #cut { z-index: 4; }
+      #tint { position: absolute; inset: 0; z-index: 2; background: var(--yellow); mix-blend-mode: multiply; opacity: 0.38; }
+      #dots { z-index: 3; mix-blend-mode: multiply; }
+      .layer { position: absolute; inset: 0; z-index: 3; }
+      .front { z-index: 5; }
+      .bubble { position: absolute; background: #fff; border: 9px solid var(--ink); border-radius: 50%; display: flex; align-items: center; justify-content: center;
+                text-align: center; font-weight: 900; font-style: italic; color: var(--ink); line-height: 0.95; box-shadow: 12px 12px 0 var(--ink); }
+      .tail { position: absolute; width: 0; height: 0; border-left: 34px solid transparent; border-right: 34px solid transparent; border-top: 80px solid var(--ink); }
+      .tail::after { content: ""; position: absolute; left: -20px; top: -86px; border-left: 20px solid transparent; border-right: 20px solid transparent; border-top: 56px solid #fff; }
+      .box { position: absolute; padding: 16px 28px; border: 8px solid var(--ink); font-weight: 900; font-style: italic; line-height: 1; color: var(--ink);
+             box-shadow: 12px 12px 0 var(--ink); white-space: nowrap; }
+      .burst { position: absolute; }
+      .burst svg { position: absolute; inset: 0; }
+      .burst span { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; text-align: center; font-weight: 900;
+                    font-style: italic; color: var(--ink); line-height: 0.92; }
+      .speed { position: absolute; height: 10px; background: var(--ink); transform-origin: left; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="8.4" data-width="1080" data-height="1920">
+      <video id="plate" class="clip full" data-start="0" data-duration="8.4" data-track-index="0" src="assets/plate.mp4" muted playsinline></video>
+      <div id="tint" class="clip" data-start="0" data-duration="8.4" data-track-index="1"></div>
+      <img id="dots" class="clip full" data-start="0" data-duration="8.4" data-track-index="2" src="assets/dots.png" alt="" />
+
+      <!-- 2: вибух-зірка за головою -->
+      <div id="b2" class="clip layer" data-start="1.34" data-duration="3.46" data-track-index="3">
+        <div class="burst" id="star" style="left:150px;top:170px;width:780px;height:600px">
+          <svg viewBox="0 0 780 600"><polygon points="390,10 450,170 610,60 560,230 770,240 590,340 700,520 500,430 420,590 350,430 150,560 220,360 10,300 210,230 120,70 320,160"
+            fill="#ffe600" stroke="#111" stroke-width="10" stroke-linejoin="round"/></svg>
+          <span id="starT" style="font-size:86px">ЖОДНОЇ<br/>ПРОГРАМИ!</span>
+        </div>
+      </div>
+
+      <video id="cut" class="clip full" data-start="0" data-duration="8.4" data-track-index="4" src="assets/cutout.webm" muted playsinline data-layout-allow-occlusion></video>
+
+      <!-- 1: бульбашка «описую словами» -->
+      <div id="b1" class="clip layer front" data-start="0.2" data-duration="1.14" data-track-index="5">
+        <div class="bubble" id="bub1" style="left:470px;top:190px;width:540px;height:300px;font-size:74px">ОПИСУЮ<br/>СЛОВАМИ!</div>
+        <div class="tail" id="tail1" style="left:560px;top:466px"></div>
+      </div>
+
+      <!-- 3: два «кадри коміксу» -->
+      <div id="b3" class="clip layer front" data-start="4.80" data-duration="2.04" data-track-index="5">
+        <div class="box" id="bx1" style="left:60px;top:250px;font-size:84px;background:var(--red);color:#fff">ШВИДКА СКЛЕЙКА!</div>
+        <div class="box" id="bx2" style="left:170px;top:430px;font-size:84px;background:var(--cyan)">БІЛЬШІ ТИТРИ!</div>
+      </div>
+
+      <!-- 4: велика бульбашка + лінії руху -->
+      <div id="b4" class="clip layer front" data-start="6.84" data-duration="1.56" data-track-index="5">
+        <div class="speed" id="s1" style="left:60px;top:200px;width:150px"></div>
+        <div class="speed" id="s2" style="left:40px;top:300px;width:170px"></div>
+        <div class="speed" id="s3" style="left:60px;top:410px;width:150px"></div>
+        <div class="bubble" id="bub4" style="left:200px;top:150px;width:800px;height:420px;font-size:104px">ЦЕ ПРОСТО<br/>ОДНЕ<br/>РЕЧЕННЯ!</div>
+        <div class="tail" id="tail4" style="left:470px;top:546px"></div>
+      </div>
+
+      <audio id="voice" class="clip" data-start="0" data-duration="8.4" data-track-index="9" src="assets/voice.m4a" data-volume="1"></audio>
+    </div>
+    <script>
+      const tl = gsap.timeline({ paused: true });
+      const pop = (sel, t, rot = 0) => tl.fromTo(sel, { scale: 0, opacity: 0, rotation: rot - 8 }, { scale: 1, opacity: 1, rotation: rot, duration: 0.42, ease: "back.out(2.6)" }, t);
+      pop("#bub1", 0.42, -3); pop("#tail1", 0.48, 28);
+      pop("#star", 3.36, -4);
+      tl.fromTo("#starT", { scale: 0.6 }, { scale: 1, duration: 0.3, ease: "back.out(3)" }, 3.70);
+      tl.to("#star", { rotation: 4, duration: 0.24, ease: "power2.inOut" }, 4.28);   // «удар» на «монтажу»
+      pop("#bx1", 4.86, -3); pop("#bx2", 5.96, 2);
+      tl.set("#s1", { rotation: -24 }, 0); tl.set("#s3", { rotation: 24 }, 0);   // нахил — через GSAP, не CSS
+      tl.fromTo(["#s1", "#s2", "#s3"], { scaleX: 0 }, { scaleX: 1, duration: 0.18, ease: "expo.out", stagger: 0.04 }, 6.90);
+      pop("#bub4", 6.88, -2); pop("#tail4", 6.94, 8);
+      tl.fromTo("#bub4", { scale: 1 }, { scale: 1.07, duration: 0.12, ease: "power2.out", yoyo: true, repeat: 1 }, 7.64);   // підстрибує на «одне»
+      window.__timelines = window.__timelines || {};
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>
